@@ -6,6 +6,7 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.widget import Widget
 from kivy.graphics import Color, Line, Rectangle
 
+from game_engine import GameEngine
 
 
 # กำหนดขนาดหน้าจอเกม (กว้าง x สูง)
@@ -76,78 +77,19 @@ class SnakeGame(Widget):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        self.snake = [(3,5), (2,5)]
-        self.walls = [(0,0), (1,0), (2,0), (3,0)]  # พื้น
-        self.apples = [(6,5)]
-        self.portal = (10,5)
-        self.game_over = False
-
-        self.direction = (0,0)
+        self.engine = GameEngine()
 
         Window.bind(on_key_down=self.on_key_down)
 
-    def apply_gravity(self):
-        while True:
-            supported = False
-
-            for x, y in self.snake:
-                below = (x, y - 1)
-
-                # ถ้ามีพื้นรองรับจริง ๆ
-                if below in self.walls:
-                    supported = True
-                    break
-
-                # ตกเหว
-                if y - 1 < 0:
-                    self.game_over = True
-                    print("GAME OVER")
-                    return
-
-            if supported:
-                return  # มีพื้นแล้ว หยุดตก
-
-            # ไม่มีพื้นเลย → ร่วงลง
-            self.snake = [(x, y - 1) for x, y in self.snake]
-
-    def move(self, dx, dy):
-        new_positions = [(x+dx, y+dy) for x,y in self.snake]
-        for pos in new_positions:
-            if pos in self.walls:
-                return False
-        # กันชนตัวเอง
-        if len(set(new_positions)) != len(new_positions):
-            return False
-        self.snake = new_positions
-        return True
-
     def on_key_down(self, window, key, *args):
-        moved = False
-
         if key == 276:
-            moved = self.move(-1,0)
+            self.engine.step(-1,0)
         elif key == 275:
-            moved = self.move(1,0)
+            self.engine.step(1,0)
         elif key == 273:
-            moved = self.move(0,1)
+            self.engine.step(0,1)
 
-        if moved:
-            self.apply_gravity()
-            self.check_apple()
-            self.check_portal()
-
-    def check_apple(self):
-        head = self.snake[0]
-
-        if head in self.apples:
-            self.apples.remove(head)
-
-        # เพิ่มความยาว 1 ช่อง (ต่อท้าย)
-            self.snake.append(self.snake[-1])
-
-    def check_portal(self):
-        if self.snake[0] == self.portal:
-            print("LEVEL COMPLETE")
+        print(self.engine.snake)
 
 
 class SnakeApp(App):
