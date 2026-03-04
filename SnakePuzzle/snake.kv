@@ -25,3 +25,39 @@
             size_hint_y: None
             height: 60
             on_press: app.stop()
+
+<GameScreen>:
+    BoxLayout:
+        orientation: "vertical"
+
+        # แถบบน
+        BoxLayout:
+            size_hint_y: None
+            height: 50
+            padding: 10
+
+            Label:
+                text: "Level 1"
+
+            Label:
+                text: "Apples Left: 3"
+
+        # พื้นที่เกม (ตอนนี้ยังว่าง)
+        BoxLayout:
+
+        # แถบล่าง
+        BoxLayout:
+            size_hint_y: None
+            height: 60
+            spacing: 20
+            padding: 10
+
+            Button:
+                text: "Pause"
+
+            Button:
+                text: "Restart"
+
+            Button:
+                text: "Menu"
+                on_press: root.manager.current = "menu"
