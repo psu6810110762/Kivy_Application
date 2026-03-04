@@ -2,12 +2,18 @@ from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.core.window import Window
 from kivy.clock import Clock
-
+from kivy.uix.screenmanager import ScreenManager, Screen
 
 # กำหนดขนาดหน้าจอเกม (กว้าง x สูง)
 CELL_SIZE = 20
 GRID_WIDTH = 800 // CELL_SIZE
 GRID_HEIGHT = 600 // CELL_SIZE
+
+class MenuScreen(Screen):
+    pass
+
+class GameScreen(Screen):
+    pass
 
 class SnakeGame(Widget):
     # คลาสนี้คือ "กระดานเกม" เดี๋ยวเราจะมาเขียนตัวงูและแอปเปิ้ลลงในนี้
@@ -90,8 +96,15 @@ class SnakeGame(Widget):
 
 class SnakeApp(App):
     def build(self):
-        # ฟังก์ชันนี้ใช้สร้างหน้าจอตอนเปิดแอป
-        return SnakeGame()
+        sm = ScreenManager()
+
+        sm.add_widget(MenuScreen(name="menu"))
+
+        game_screen = GameScreen(name="game")
+        game_screen.add_widget(SnakeGame())
+        sm.add_widget(game_screen)
+
+        return sm
 
 if __name__ == '__main__':
     # สั่งรันแอป
