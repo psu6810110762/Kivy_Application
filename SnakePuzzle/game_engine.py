@@ -1,12 +1,10 @@
+from levels import LEVELS
+
 class GameEngine:
     def __init__(self):
-        self.snake = [(3,5), (2,5)]
-        self.walls = [(0,0), (1,0), (2,0), (3,0)]
-        self.apples = [(6,5)]
-        self.portal = (10,5)
-
-        self.game_over = False
-        self.level_complete = False
+        self.current_level = 0
+        self.game_won = False
+        self.load_level(self.current_level)
     
     def apply_gravity(self):
         while True:
@@ -42,7 +40,13 @@ class GameEngine:
         return True
 
     def step(self, dx, dy):
-        if self.game_over or self.level_complete:
+
+        if self.game_over:
+            return
+
+        # ถ้าด่านจบแล้ว ให้ไปด่านถัดไป
+        if self.level_complete:
+            self.next_level()
             return
 
         moved = self.move(dx, dy)
@@ -71,5 +75,33 @@ class GameEngine:
             "apples": self.apples,
             "portal": self.portal,
             "game_over": self.game_over,
-            "level_complete": self.level_complete
+            "level_complete": self.level_complete,
+            "current_level": self.current_level,
+            "game_won": self.game_won
         }
+    
+    def load_level(self, level_index):
+        level = LEVELS[level_index]
+
+        required_keys = ["snake", "walls", "apples", "portal"]
+        for key in required_keys:
+            if key not in level:
+                raise ValueError(f"Level missing key: {key}")
+
+        self.game_over = False
+        self.level_complete = False
+
+    def reset_level(self):
+        self.load_level(self.current_level)
+
+    def next_level(self):
+        if self.current_level + 1 < len(LEVELS):
+            self.current_level += 1
+            self.load_level(self.current_level)
+        else:
+            self.game_won = True
+             
+    def restart_game(self):
+        self.current_level = 0
+        self.game_won = False
+        self.load_level(self.current_level)
