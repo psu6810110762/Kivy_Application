@@ -50,14 +50,25 @@ class GameBoard(Widget):
 
         # งู
         with self.canvas:
-            Color(0, 1, 0, 1)  # เขียว
-            Rectangle(pos=(self.x + 5*cell, self.y + 5*cell),
-                    size=(cell, cell))
+            snake_body = [(5,5), (4,5), (3,5)]
+
+            for i, (gx, gy) in enumerate(snake_body):
+                if i == 0:
+                    Color(0, 0.8, 0, 1)  #หัว
+                else:
+                    Color(0, 1, 0, 1)    #ตัว
+
+                Rectangle(
+                    pos=(self.x + gx*cell, self.y + gy*cell),
+                    size=(cell, cell)
+                )
 
             # แอปเปิ้ล
             Color(1, 0, 0, 1)  # แดง
-            Rectangle(pos=(self.x + 8*cell, self.y + 8*cell),
-                    size=(cell, cell))
+            Rectangle(
+                pos=(self.x + 8*cell, self.y + 8*cell),
+                size=(cell, cell)
+            )
 
 
 class SnakeGame(Widget):
