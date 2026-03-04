@@ -3,6 +3,7 @@ from kivy.uix.widget import Widget
 from kivy.core.window import Window
 from kivy.clock import Clock
 
+
 # กำหนดขนาดหน้าจอเกม (กว้าง x สูง)
 CELL_SIZE = 20
 GRID_WIDTH = 800 // CELL_SIZE
@@ -12,34 +13,80 @@ class SnakeGame(Widget):
     # คลาสนี้คือ "กระดานเกม" เดี๋ยวเราจะมาเขียนตัวงูและแอปเปิ้ลลงในนี้
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        # ทิศทางเริ่มต้น
-        self.direction = (1, 0)
-        # ตำแหน่งงู (หัวอยู่ index 0)
-        self.snake = [(5, 5), (4, 5), (3, 5)]
-        # เริ่ม Game Loop
-        Clock.schedule_interval(self.update, 1/10)  # 10 FPS
 
-    def move_snake(self):
-        head_x, head_y = self.snake[0]
-        dx, dy = self.direction
-        new_head = (head_x + dx, head_y + dy)
-    # เพิ่มหัวใหม่
-        self.snake.insert(0, new_head)
-    # ลบหางออก (ถ้ายังไม่กินอะไร)
-        self.snake.pop()
+        self.snake = [(3,5), (2,5)]
+        self.walls = [(0,0), (1,0), (2,0), (3,0)]  # พื้น
+        self.apples = [(6,5)]
+        self.portal = (10,5)
+        self.game_over = False
 
-    def check_collision(self):
-        head_x, head_y = self.snake[0]
-    # ชนขอบ
-        if head_x < 0 or head_x >= GRID_WIDTH:
-            return True
-        if head_y < 0 or head_y >= GRID_HEIGHT:
-            return True
-    # ชนตัวเอง
-        if self.snake[0] in self.snake[1:]:
-            return True
+        self.direction = (0,0)
 
-        return False
+        Window.bind(on_key_down=self.on_key_down)
+       
+
+    def apply_gravity(self):
+        while True:
+            supported = False
+
+            for x, y in self.snake:
+                below = (x, y - 1)
+
+                # ถ้ามีพื้นรองรับจริง ๆ
+                if below in self.walls:
+                    supported = True
+                    break
+
+                # ตกเหว
+                if y - 1 < 0:
+                    self.game_over = True
+                    print("GAME OVER")
+                    return
+
+            if supported:
+                return  # มีพื้นแล้ว หยุดตก
+
+            # ไม่มีพื้นเลย → ร่วงลง
+            self.snake = [(x, y - 1) for x, y in self.snake]
+
+    def move(self, dx, dy):
+        new_positions = [(x+dx, y+dy) for x,y in self.snake]
+        for pos in new_positions:
+            if pos in self.walls:
+                return False
+        # กันชนตัวเอง
+        if len(set(new_positions)) != len(new_positions):
+            return False
+        self.snake = new_positions
+        return True
+
+    def on_key_down(self, window, key, *args):
+        moved = False
+
+        if key == 276:
+            moved = self.move(-1,0)
+        elif key == 275:
+            moved = self.move(1,0)
+        elif key == 273:
+            moved = self.move(0,1)
+
+        if moved:
+            self.apply_gravity()
+            self.check_apple()
+            self.check_portal()
+
+    def check_apple(self):
+        head = self.snake[0]
+
+        if head in self.apples:
+            self.apples.remove(head)
+
+        # เพิ่มความยาว 1 ช่อง (ต่อท้าย)
+            self.snake.append(self.snake[-1])
+
+    def check_portal(self):
+        if self.snake[0] == self.portal:
+            print("LEVEL COMPLETE")
 
 class SnakeApp(App):
     def build(self):
