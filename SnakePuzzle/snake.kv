@@ -1,0 +1,78 @@
+<MenuScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        spacing: 30
+        padding: 80
+
+        Label:
+            text: "SNAKE PUZZLE"
+            font_size: 48
+            bold: True
+
+        Button:
+            text: "Start Game"
+            size_hint_y: None
+            height: 60
+            on_press: root.manager.current = "game"
+
+        Button:
+            text: "Select Level"
+            size_hint_y: None
+            height: 60
+
+        Button:
+            text: "Exit"
+            size_hint_y: None
+            height: 60
+            on_press: app.stop()
+
+<GameScreen>:
+    BoxLayout:
+        orientation: "vertical"
+
+        # แถบบน
+        BoxLayout:
+            size_hint_y: None
+            height: 50
+            padding: 10
+
+            Label:
+                text: "Level 1"
+
+            Label:
+                text: "Apples Left: 3"
+
+        # พื้นที่เกม
+        GameBoard:
+            canvas.before:
+                Color:
+                    rgba: 0, 0, 0, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+                # เส้น Grid แนวตั้ง
+                Color:
+                    rgba: 0.2, 0.2, 0.2, 1
+                Line:
+                    width: 1
+                    points: self.x, self.y, self.x, self.top
+                Line:
+                    width: 1
+                    points: self.right, self.y, self.right, self.top
+
+        # แถบล่าง
+        BoxLayout:
+            size_hint_y: None
+            height: 60
+            spacing: 20
+            padding: 10
+
+            Button:
+                text: "Pause"
+
+            Button:
+                text: "Restart"
+
+            Button:
+                text: "Menu"
+                on_press: root.manager.current = "menu"
