@@ -3,6 +3,9 @@ from kivy.uix.widget import Widget
 from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.widget import Widget
+from kivy.graphics import Color, Line
+
 
 # กำหนดขนาดหน้าจอเกม (กว้าง x สูง)
 CELL_SIZE = 20
@@ -12,8 +15,40 @@ GRID_HEIGHT = 600 // CELL_SIZE
 class MenuScreen(Screen):
     pass
 
+
 class GameScreen(Screen):
     pass
+
+
+class GameBoard(Widget):
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.bind(size=self.draw_grid, pos=self.draw_grid)
+
+    def draw_grid(self, *args):
+        self.canvas.before.clear()
+
+        with self.canvas.before:
+            # พื้นหลังดำ
+            Color(0, 0, 0, 1)
+            Line(rectangle=(self.x, self.y, self.width, self.height))
+
+            # เส้น grid
+            Color(0.2, 0.2, 0.2, 1)
+
+            cell = 40
+
+            # เส้นแนวตั้ง
+            for x in range(0, int(self.width), cell):
+                Line(points=[self.x + x, self.y,
+                             self.x + x, self.top])
+
+            # เส้นแนวนอน
+            for y in range(0, int(self.height), cell):
+                Line(points=[self.x, self.y + y,
+                             self.right, self.y + y])
+
 
 class SnakeGame(Widget):
     # คลาสนี้คือ "กระดานเกม" เดี๋ยวเราจะมาเขียนตัวงูและแอปเปิ้ลลงในนี้
@@ -29,7 +64,6 @@ class SnakeGame(Widget):
         self.direction = (0,0)
 
         Window.bind(on_key_down=self.on_key_down)
-       
 
     def apply_gravity(self):
         while True:
@@ -94,6 +128,7 @@ class SnakeGame(Widget):
         if self.snake[0] == self.portal:
             print("LEVEL COMPLETE")
 
+
 class SnakeApp(App):
     def build(self):
         sm = ScreenManager()
@@ -105,6 +140,7 @@ class SnakeApp(App):
         sm.add_widget(game_screen)
 
         return sm
+
 
 if __name__ == '__main__':
     # สั่งรันแอป

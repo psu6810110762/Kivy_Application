@@ -43,13 +43,22 @@
                 text: "Apples Left: 3"
 
         # พื้นที่เกม
-        FloatLayout:
+        GameBoard:
             canvas.before:
                 Color:
                     rgba: 0, 0, 0, 1
                 Rectangle:
                     pos: self.pos
                     size: self.size
+                # เส้น Grid แนวตั้ง
+                Color:
+                    rgba: 0.2, 0.2, 0.2, 1
+                Line:
+                    width: 1
+                    points: self.x, self.y, self.x, self.top
+                Line:
+                    width: 1
+                    points: self.right, self.y, self.right, self.top
 
         # แถบล่าง
         BoxLayout:
