@@ -97,20 +97,57 @@
             on_press: app.stop()
 
 <GameScreen>:
+    canvas.before:
+        Color:
+            rgba: 0.07, 0.09, 0.12, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
     BoxLayout:
         orientation: "vertical"
 
         # แถบบน
         BoxLayout:
             size_hint_y: None
-            height: 50
-            padding: 10
+            height: 64
+            padding: [24, 0, 24, 0]
+            spacing: 10
+            canvas.before:
+                Color:
+                    rgba: 0.1, 0.13, 0.17, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+                Color:
+                    rgba: 0.44, 1, 0.47, 0.15
+                Rectangle:
+                    pos: self.x, self.y
+                    size: self.width, 2
 
             Label:
-                text: "Level 1"
+                text: "[color=#FFD84D][b]Level 1[/b][/color]"
+                markup: True
+                font_size: 22
+                text_size: self.size
+                halign: "left"
+                valign: "middle"
 
             Label:
-                text: "Apples Left: 3"
+                text: "[color=#44FF77][b]SNAKE PUZZLE[/b][/color]"
+                markup: True
+                font_size: 20
+                text_size: self.size
+                halign: "center"
+                valign: "middle"
+
+            Label:
+                text: "[color=#FF5555][b]Apples: 2[/b][/color]"
+                markup: True
+                font_size: 22
+                text_size: self.size
+                halign: "right"
+                valign: "middle"
 
         # พื้นที่เกม
         SnakeGame:
