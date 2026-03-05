@@ -40,24 +40,42 @@ class SnakeGame(Widget):
 
         with self.canvas:
             #ประตูมิติ
-            Color(0.8, 0.2, 0.8, 1)
             px, py = state["portal"]
+            Color(0.6, 0.1, 0.6, 1)
             Rectangle(pos=(self.x + px*cell, self.y + py*cell), size=(cell, cell))
+            Color(0.9, 0.5, 0.9, 1) # ขอบประตูสว่างๆ
+            Line(rectangle=(self.x + px*cell, self.y + py*cell, cell, cell), width=1.5)
 
             #กำแพง
-            Color(0.6, 0.4, 0.2, 1)
             for wx, wy in state["walls"]:
+                Color(0.5, 0.3, 0.15, 1)
                 Rectangle(pos=(self.x + wx*cell, self.y + wy*cell), size=(cell, cell))
+                Color(0.2, 0.1, 0.05, 1) # เส้นขอบกำแพงสีเข้ม
+                Line(rectangle=(self.x + wx*cell, self.y + wy*cell, cell, cell), width=1.2)
 
             #แอปเปิ้ล
             Color(0.9, 0.2, 0.2, 1)
             for ax, ay in state["apples"]:
-                Rectangle(pos=(self.x + ax*cell, self.y + ay*cell), size=(cell, cell))
+                # วาดแอปเปิ้ลให้เล็กลงกว่าช่อง
+                padding = 4
+                Rectangle(pos=(self.x + ax*cell + padding, self.y + ay*cell + padding), 
+                          size=(cell - padding*2, cell - padding*2))
 
             #งู
-            Color(0.2, 0.8, 0.2, 1)
-            for sx, sy in state["snake"]:
-                Rectangle(pos=(self.x + sx*cell, self.y + sy*cell), size=(cell, cell))
+            snake_coords = state["snake"]
+            if snake_coords:
+                # ลำตัว
+                Color(0.3, 0.8, 0.3, 1)
+                for sx, sy in snake_coords[1:]:
+                    # ลำตัวเล็กกว่าช่องนิดนึง
+                    pad = 2
+                    Rectangle(pos=(self.x + sx*cell + pad, self.y + sy*cell + pad), 
+                              size=(cell - pad*2, cell - pad*2))
+                
+                # หัวงู
+                hx, hy = snake_coords[0]
+                Color(0.1, 0.5, 0.1, 1)
+                Rectangle(pos=(self.x + hx*cell, self.y + hy*cell), size=(cell, cell))
 
     def on_key_down(self, window, key, *args):
         if key == 276:   # Left
