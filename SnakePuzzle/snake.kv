@@ -1,4 +1,11 @@
 <MenuScreen>:
+    canvas.before:
+        Color:
+            rgba: 0.6, 0.85, 0.95, 1  # สีฟ้าอ่อน
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
     BoxLayout:
         orientation: "vertical"
         spacing: 30
@@ -6,8 +13,11 @@
 
         Label:
             text: "SNAKE PUZZLE"
-            font_size: 48
+            font_size: 64
             bold: True
+            color: 0.3, 0.8, 0.3, 1    # สีเขียว
+            outline_color: 1, 1, 1, 1  # ขอบตัวอักษรสีขาว
+            outline_width: 3
 
         Button:
             text: "Start Game"
