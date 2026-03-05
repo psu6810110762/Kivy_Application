@@ -1,39 +1,99 @@
 <MenuScreen>:
     canvas.before:
         Color:
-            rgba: 0.6, 0.85, 0.95, 1  # สีฟ้าอ่อน
+            rgba: 0.07, 0.09, 0.12, 1
         Rectangle:
             pos: self.pos
             size: self.size
 
     BoxLayout:
         orientation: "vertical"
-        spacing: 30
-        padding: 80
+        spacing: 28
+        padding: [60, 70, 60, 70]
 
-        Label:
-            text: "SNAKE PUZZLE"
-            font_size: 64
-            bold: True
-            color: 0.3, 0.8, 0.3, 1    # สีเขียว
-            outline_color: 1, 1, 1, 1  # ขอบตัวอักษรสีขาว
-            outline_width: 3
+        BoxLayout:
+            orientation: "vertical"
+            size_hint_y: None
+            height: 130
+            spacing: 4
+
+            Label:
+                text: "[color=#44FF77][b]SNAKE[/b][/color] [color=#FFD84D][b]PUZZLE[/b][/color]"
+                markup: True
+                font_size: 58
+                halign: "center"
+                valign: "middle"
+
+            Label:
+                text: "[color=#ffffff55]_________________________________[/color]"
+                markup: True
+                font_size: 18
+                halign: "center"
+                valign: "middle"
+
+            Label:
+                text: "[color=#aaaaaa]Think. Slither. Solve.[/color]"
+                markup: True
+                font_size: 16
+                italic: True
+                halign: "center"
+                valign: "middle"
+
+        Widget:
+            size_hint_y: None
+            height: 10
 
         Button:
             text: "Start Game"
+            font_size: 22
+            bold: True
             size_hint_y: None
-            height: 60
+            height: 62
+            background_normal: ''
+            background_color: 0.16, 0.72, 0.38, 1
+            color: 1, 1, 1, 1
+            canvas.before:
+                Color:
+                    rgba: 0.1, 0.55, 0.28, 1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [12]
             on_press: root.manager.current = "game"
 
         Button:
             text: "Select Level"
+            font_size: 22
+            bold: True
             size_hint_y: None
-            height: 60
+            height: 62
+            background_normal: ''
+            background_color: 0.9, 0.72, 0.08, 1
+            color: 0.1, 0.08, 0.0, 1
+            canvas.before:
+                Color:
+                    rgba: 0.75, 0.58, 0.04, 1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [12]
 
         Button:
             text: "Exit"
+            font_size: 20
+            bold: True
             size_hint_y: None
-            height: 60
+            height: 62
+            background_normal: ''
+            background_color: 0.22, 0.22, 0.25, 1
+            color: 0.7, 0.7, 0.7, 1
+            canvas.before:
+                Color:
+                    rgba: 0.18, 0.18, 0.21, 1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [12]
             on_press: app.stop()
 
 <GameScreen>:
