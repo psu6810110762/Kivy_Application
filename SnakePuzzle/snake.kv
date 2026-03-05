@@ -230,3 +230,123 @@
                         size: self.size
                         radius: [10]
                 on_press: root.manager.current = "menu"
+
+    # Game Over
+    BoxLayout:
+        id: game_over_layout
+        orientation: "vertical"
+        opacity: 0
+        disabled: True
+        spacing: 20
+        padding: [60, 80, 60, 80]
+        canvas.before:
+            Color:
+                rgba: 0, 0, 0, 0.88
+            Rectangle:
+                pos: self.pos
+                size: self.size
+                # เส้นขอบแดงเรืองด้านบน
+            Color:
+                rgba: 1, 0.2, 0.2, 0.6
+            Line:
+                points: self.x, self.top - 2, self.right, self.top - 2
+                width: 2
+                # เส้นขอบแดงเรืองด้านล่าง
+            Color:
+                rgba: 1, 0.2, 0.2, 0.6
+            Line:
+                points: self.x, self.y + 2, self.right, self.y + 2
+                width: 2
+
+        # ไอคอนหัวกะโหลก
+        Label:
+            text: "X_X"
+            font_size: 52
+            bold: True
+            color: 0.9, 0.2, 0.2, 1
+            halign: "center"
+            size_hint_y: None
+            height: 70
+
+        # GAME OVER
+        Label:
+            text: "[color=#FF3333][b]GAME OVER[/b][/color]"
+            markup: True
+            font_size: 72
+            halign: "center"
+            size_hint_y: None
+            height: 100
+
+            # เส้นคั่น
+        Label:
+            text: "[color=#ff333355]________________________[/color]"
+            markup: True
+            font_size: 20
+            halign: "center"
+            size_hint_y: None
+            height: 30
+
+        # ข้อความรอง
+        Label:
+            text: "[color=#aaaaaa]You fell into the abyss...[/color]"
+            markup: True
+            font_size: 26
+            italic: True
+            halign: "center"
+            size_hint_y: None
+            height: 50
+
+        Widget:
+            size_hint_y: None
+            height: 30
+
+        # ปุ่ม Retry
+        AnchorLayout:
+            size_hint_y: None
+            height: 70
+            anchor_x: "center"
+            Button:
+                text: "Try Again"
+                font_size: 22
+                bold: True
+                size_hint: None, None
+                size: 260, 58
+                background_normal: ''
+                background_color: 0.16, 0.72, 0.38, 1
+                color: 1, 1, 1, 1
+                canvas.before:
+                    Color:
+                        rgba: 0.1, 0.55, 0.28, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [12]
+                on_press:
+                    game_over_layout.opacity = 0
+                    game_over_layout.disabled = True
+
+        # ปุ่ม Back to Menu
+        AnchorLayout:
+            size_hint_y: None
+            height: 70
+            anchor_x: "center"
+            Button:
+                text: "Back to Menu"
+                font_size: 22
+                bold: True
+                size_hint: None, None
+                size: 260, 58
+                background_normal: ''
+                background_color: 0.22, 0.22, 0.25, 1
+                color: 0.7, 0.7, 0.7, 1
+                canvas.before:
+                    Color:
+                        rgba: 0.18, 0.18, 0.21, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [12]
+                on_press:
+                    root.manager.current = "menu"
+                    game_over_layout.opacity = 0
+                    game_over_layout.disabled = True
