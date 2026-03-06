@@ -1,218 +1,152 @@
-from kivy.app import App
-from kivy.uix.widget import Widget
-from kivy.core.window import Window
-from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.graphics import (Color, Line, Rectangle,
-                            Ellipse, RoundedRectangle)
-
-from game_engine import GameEngine
-
-CELL = 40
-Window.size = (800, 600)
+# game_engine.py
+from levels import LEVELS
 
 
-class MenuScreen(Screen):
-    pass
+class GameEngine:
 
+    def __init__(self):
+        self.current_level = 0
+        self.game_won = False
+        self.load_level(self.current_level)
 
-class GameScreen(Screen):
-    def restart(self):
-        for widget in self.walk():
-            if isinstance(widget, GameBoard):
-                widget.engine.reset_level()
-                widget.redraw()
-                break
+    # ------------------------------------------------------------------
+    def apply_gravity(self):
+        # ── gravity งู ──────────────────────────────────────────────────
+        while True:
+            supported = False
+            for x, y in self.snake:
+                below = (x, y - 1)
+                # มีพื้นหรือหินรองรับ
+                if below in self.walls or below in self.rocks:
+                    supported = True
+                    break
+                # ตกออกนอกหน้าจอ
+                if y - 1 < 0:
+                    self.game_over = True
+                    return
+            if supported:
+                break  # ออกจาก loop งู แล้วไปทำ gravity หินต่อ
+            self.snake = [(x, y - 1) for x, y in self.snake]
 
+        # ── gravity หิน ─────────────────────────────────────────────────
+        changed = True
+        while changed:
+            changed = False
+            for i, (rx, ry) in enumerate(self.rocks):
+                # ตกออกนอกหน้าจอ — ลบหินออก
+                if ry - 1 < 0:
+                    continue
+                below = (rx, ry - 1)
+                # ไม่มีพื้นและไม่มีหินรองรับ → ตก
+                if below not in self.walls and below not in self.rocks:
+                    self.rocks[i] = (rx, ry - 1)
+                    changed = True
 
-class GameBoard(Widget):
+    # ------------------------------------------------------------------
+    def move(self, dx, dy):
+        head_x, head_y = self.snake[0]
+        new_head = (head_x + dx, head_y + dy)
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.engine = GameEngine()
-        self.bind(size=self.redraw, pos=self.redraw)
-        self._keyboard = Window.request_keyboard(self._on_keyboard_closed, self)
-        self._keyboard.bind(on_key_down=self.on_key_down)
+        # กันออกนอกขอบหน้าจอ
+        if new_head[0] < 0 or new_head[1] < 0:
+            return False
 
-    def _on_keyboard_closed(self):
-        self._keyboard.unbind(on_key_down=self.on_key_down)
-        self._keyboard = None
+        # ชนก้อนหิน → ดันหิน
+        if new_head in self.rocks:
+            rock_new = (new_head[0] + dx, new_head[1] + dy)
+            # หินชนกำแพง หรือชนหินก้อนอื่น หรือนอกขอบ = ดันไม่ได้
+            if (rock_new in self.walls or
+                rock_new in self.rocks or
+                rock_new[0] < 0 or rock_new[1] < 0):
+                return False
+            # ดันหินได้
+            self.rocks.remove(new_head)
+            self.rocks.append(rock_new)
 
-    def on_key_down(self, keyboard, keycode, text, modifiers):
-        key = keycode[0]
+        # ชนกำแพง
+        if new_head in self.walls:
+            return False
 
-        # ถ้า game over กด R หรือ Enter เพื่อเล่นใหม่
-        if self.engine.game_over:
-            if text == 'r' or key == 13:
-                self.engine.reset_level()
-                self.redraw()
+        # ชนตัวเอง
+        if new_head in self.snake[:-1]:
+            return False
+
+        self.snake = [new_head] + self.snake[:-1]
+        return True
+
+    # ------------------------------------------------------------------
+    def step(self, dx, dy):
+        if self.game_over:
             return
 
-        key_map = {
-            276: (-1,  0),
-            275: ( 1,  0),
-            273: ( 0,  1),
-            274: ( 0, -1),
+        if self.level_complete:
+            self.next_level()
+            return
+
+        moved = self.move(dx, dy)
+
+        if moved:
+            self.apply_gravity()
+            self.check_apple()
+            self.check_portal()
+
+    # ------------------------------------------------------------------
+    def check_apple(self):
+        head = self.snake[0]
+        if head in self.apples:
+            self.apples.remove(head)
+            self.snake.append(self.snake[-1])
+
+    # ------------------------------------------------------------------
+    def check_portal(self):
+        if self.snake[0] == self.portal:
+            self.level_complete = True
+
+    # ------------------------------------------------------------------
+    def get_state(self):
+        return {
+            "background":     self.background,
+            "snake":          self.snake,
+            "walls":          self.walls,
+            "apples":         self.apples,
+            "portal":         self.portal,
+            "rocks":          self.rocks,
+            "game_over":      self.game_over,
+            "level_complete": self.level_complete,
+            "current_level":  self.current_level,
+            "game_won":       self.game_won,
         }
-        if key in key_map:
-            self.engine.step(*key_map[key])
-            self.redraw()
-        elif text == 'r':
-            self.engine.reset_level()
-            self.redraw()
 
     # ------------------------------------------------------------------
-    # draw helpers
-    # ------------------------------------------------------------------
-    def draw_snake(self, snake, ox, oy, c):
-        for i, (sx, sy) in enumerate(snake):
-            x = ox + sx * c
-            y = oy + sy * c
+    def load_level(self, level_index):
+        level = LEVELS[level_index]
 
-            if i == 0:
-                # หัวงู
-                Color(0.1, 0.80, 0.35, 1)
-                RoundedRectangle(pos=(x+2, y+2), size=(c-4, c-4), radius=[10])
-                # ตาขาว
-                Color(1, 1, 1, 1)
-                Ellipse(pos=(x+7,  y+c-17), size=(9, 9))
-                Ellipse(pos=(x+c-16, y+c-17), size=(9, 9))
-                # ตาดำ
-                Color(0.05, 0.05, 0.05, 1)
-                Ellipse(pos=(x+9,  y+c-15), size=(5, 5))
-                Ellipse(pos=(x+c-14, y+c-15), size=(5, 5))
-                # ลิ้นแฉก
-                Color(0.95, 0.2, 0.2, 1)
-                Line(points=[x+c*0.5, y+4,
-                              x+c*0.35, y-4], width=1.5)
-                Line(points=[x+c*0.5, y+4,
-                              x+c*0.65, y-4], width=1.5)
-            else:
-                # ตัวงู ไล่สีเข้มขึ้นตามความยาว
-                t = i / max(len(snake) - 1, 1)
-                Color(0.05, 0.65 - t * 0.2, 0.25, 1)
-                RoundedRectangle(pos=(x+4, y+4), size=(c-8, c-8), radius=[7])
-                # ลายเกล็ด
-                Color(0.0, 0.45 - t * 0.1, 0.15, 0.5)
-                Ellipse(pos=(x+10, y+10), size=(c-20, c-20))
+        required_keys = ["snake", "walls", "apples", "portal"]
+        for key in required_keys:
+            if key not in level:
+                raise ValueError(f"Level missing key: {key}")
 
-    def draw_apple(self, apples, ox, oy, c):
-        for (ax, ay) in apples:
-            x = ox + ax * c
-            y = oy + ay * c
-            m = c * 0.1
-
-            # ลูกแอปเปิ้ล
-            Color(0.88, 0.12, 0.12, 1)
-            Ellipse(pos=(x+m, y+m), size=(c-m*2, c-m*2))
-            # เงาด้านซ้ายล่าง
-            Color(0.55, 0.05, 0.05, 0.55)
-            Ellipse(pos=(x+m, y+m), size=(c*0.4, c*0.4))
-            # แสงสะท้อนด้านขวาบน
-            Color(1, 0.65, 0.65, 0.65)
-            Ellipse(pos=(x+c*0.52, y+c*0.50), size=(c*0.22, c*0.22))
-            # ก้าน
-            Color(0.35, 0.20, 0.04, 1)
-            Line(points=[x+c*0.50, y+c-m*1.5,
-                          x+c*0.62, y+c+2], width=2.5)
-            # ใบ
-            Color(0.18, 0.68, 0.18, 1)
-            Ellipse(pos=(x+c*0.50, y+c-m*2), size=(c*0.28, c*0.18))
-
-    def draw_portal(self, portal, ox, oy, c):
-        px, py = portal
-        x  = ox + px * c
-        y  = oy + py * c
-        cx = x + c / 2
-        cy = y + c / 2
-
-        # วงนอกสุด — ม่วงจาง
-        Color(0.55, 0.05, 0.95, 0.35)
-        Ellipse(pos=(x+2, y+2), size=(c-4, c-4))
-        # วงแหวนชั้นนอก
-        Color(0.80, 0.25, 1.0, 0.80)
-        Line(circle=(cx, cy, c*0.44), width=3)
-        # วงแหวนชั้นกลาง
-        Color(0.95, 0.60, 1.0, 1)
-        Line(circle=(cx, cy, c*0.28), width=2)
-        # แกนกลางสว่าง
-        Color(1, 1, 1, 1)
-        Ellipse(pos=(cx-5, cy-5), size=(10, 10))
-        # เส้นรัศมี 4 ทิศ
-        Color(0.85, 0.45, 1.0, 0.55)
-        for dx, dy in [(1,0),(-1,0),(0,1),(0,-1)]:
-            Line(points=[cx + dx*c*0.28, cy + dy*c*0.28,
-                          cx + dx*c*0.44, cy + dy*c*0.44], width=1.5)
+        self.background     = level.get("background", "assets/bg_sky.png")
+        self.snake          = list(level["snake"])
+        self.walls          = set(level["walls"])
+        self.apples         = list(level["apples"])
+        self.portal         = level["portal"]
+        self.rocks          = list(level.get("rocks", []))
+        self.game_over      = False
+        self.level_complete = False
 
     # ------------------------------------------------------------------
-    # redraw
-    # ------------------------------------------------------------------
-    def redraw(self, *args):
-        self.canvas.clear()
-        state = self.engine.get_state()
-        c  = CELL
-        ox = self.x
-        oy = self.y
+    def reset_level(self):
+        self.load_level(self.current_level)
 
-        with self.canvas:
+    def next_level(self):
+        if self.current_level + 1 < len(LEVELS):
+            self.current_level += 1
+            self.load_level(self.current_level)
+        else:
+            self.game_won = True
 
-            # background รูปภาพ
-            Color(1, 1, 1, 1)
-            Rectangle(
-                source=state["background"],
-                pos=self.pos,
-                size=self.size
-            )
-
-            # grid จางๆ ทับ background
-            Color(0, 0, 0, 0.15)
-            for x in range(0, int(self.width) + c, c):
-                Line(points=[ox+x, oy, ox+x, oy+self.height])
-            for y in range(0, int(self.height) + c, c):
-                Line(points=[ox, oy+y, ox+self.width, oy+y])
-
-            # walls
-            Color(0.35, 0.38, 0.55, 0.85)
-            for (wx, wy) in state["walls"]:
-                Rectangle(pos=(ox+wx*c, oy+wy*c), size=(c, c))
-            Color(0.60, 0.63, 0.80, 1)
-            for (wx, wy) in state["walls"]:
-                Line(points=[ox+wx*c, oy+wy*c+c,
-                              ox+wx*c+c, oy+wy*c+c], width=2)
-
-            # apples
-            self.draw_apple(state["apples"], ox, oy, c)
-
-            # portal
-            if not state["level_complete"]:
-                self.draw_portal(state["portal"], ox, oy, c)
-
-            # snake
-            self.draw_snake(state["snake"], ox, oy, c)
-
-            # overlay — game over
-            if state["game_over"]:
-                Color(0.8, 0.1, 0.1, 0.55)
-                Rectangle(pos=self.pos, size=self.size)
-
-            # overlay — level complete
-            if state["level_complete"]:
-                Color(0.1, 0.8, 0.4, 0.45)
-                Rectangle(pos=self.pos, size=self.size)
-
-            # overlay — game won
-            if state["game_won"]:
-                Color(0.9, 0.7, 0.1, 0.55)
-                Rectangle(pos=self.pos, size=self.size)
-
-
-class SnakeApp(App):
-
-    def build(self):
-        sm = ScreenManager()
-        sm.add_widget(MenuScreen(name="menu"))
-        sm.add_widget(GameScreen(name="game"))
-        return sm
-
-
-if __name__ == "__main__":
-    SnakeApp().run()
+    def restart_game(self):
+        self.current_level = 0
+        self.game_won = False
+        self.load_level(self.current_level)
