@@ -49,22 +49,23 @@ LEVELS = [
     },
     # ด่าน 2
     {
-    "name":       "ป่าลึก",
-    "background": "assets/bg_forest.png",
-    "snake":  [(5, 6), (4, 6), (3, 6)],
-    "walls":  _d2_walls,
-    "apples": [(3, 9)],
-    "portal": (14, 10),
-    "rocks":  [(8, 8), (7, 6)],
+        "name":       "ป่าลึก",
+        "background": "assets/bg_forest.png",
+        "snake":  [(5, 6), (4, 6), (3, 6)],
+        "walls":  _d2_walls,
+        "apples": [(3, 9)],
+        "portal": (14, 10),
+        "rocks":  [(8, 8), (7, 6)],
     },
     # ด่าน 3
     {
         "name":       "ใต้ทะเล",
         "background": "assets/bg_ocean.png",
-        "snake":  [(3, 5), (2, 5), (1, 5)],
-        "walls":  _temp,
-        "apples": [(9, 5)],
-        "portal": (18, 5),
+        "snake":  [(8, 6), (7, 6), (6, 6)],
+        "walls":  _d3_walls,
+        "apples": [(8, 10), (13, 14)],
+        "portal": (14, 6),
+        "rocks":  [(11, 8)],
     },
     # ด่าน 4
     {
