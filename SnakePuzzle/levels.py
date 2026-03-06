@@ -24,6 +24,15 @@ _d2_mid    = make_platform(8,  9,  7, 7)   # พื้นกลาง
 _d2_step   = make_platform(10, 10, 7, 8)   # ขั้นบันได
 _d2_walls  = _d2_left | _d2_right | _d2_low | _d2_mid | _d2_step
 
+# ── ด่าน 3 ──────────────────────────────────────────────────────────────────
+_d3_a = make_platform(6,  7,  7, 9)   # แท่งซ้าย
+_d3_b = make_platform(8,  12, 9, 9)   # พื้นบนกลาง
+_d3_c = make_platform(6,  8,  5, 5)   # พื้นล่างซ้าย
+_d3_d = make_platform(13, 13, 10, 13) # แท่งขวา
+_d3_e = make_platform(14, 15, 10, 10) # พื้นขวาบน
+_d3_f = make_platform(13, 14, 6, 8)   # พื้นขวาล่าง
+_d3_walls = _d3_a | _d3_b | _d3_c | _d3_d | _d3_e | _d3_f
+
 LEVELS = [
     # ด่าน 1
     {
