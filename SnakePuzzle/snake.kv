@@ -238,6 +238,7 @@
         orientation: "vertical"
         opacity: 0
         disabled: True
+        pos_hint: {'center_y': 0.5} if self.opacity == 1 else {'center_y': 5.0}
         spacing: 20
         padding: [60, 80, 60, 80]
         canvas.before:
