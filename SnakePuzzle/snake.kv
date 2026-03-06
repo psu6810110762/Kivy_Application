@@ -126,6 +126,7 @@
                     size: self.width, 2
 
             Label:
+                id: level_label
                 text: "[color=#FFD84D][b]Level 1[/b][/color]"
                 markup: True
                 font_size: 22
@@ -142,6 +143,7 @@
                 valign: "middle"
 
             Label:
+                id: apple_label
                 text: "[color=#FF5555][b]Apples: 2[/b][/color]"
                 markup: True
                 font_size: 22
@@ -199,6 +201,7 @@
                         pos: self.pos
                         size: self.size
                         radius: [10]
+                on_press: game_board.toggle_pause()
 
             Button:
                 text: "Restart"
@@ -230,7 +233,9 @@
                         pos: self.pos
                         size: self.size
                         radius: [10]
-                on_press: root.manager.current = "menu"
+                on_press: 
+                    game_board.restart_game()
+                    root.manager.current = "menu"
 
     # Game Over
     BoxLayout:
@@ -279,7 +284,7 @@
             size_hint_y: None
             height: 100
 
-            # เส้นคั่น
+        # เส้นคั่น
         Label:
             text: "[color=#ff333355]________________________[/color]"
             markup: True
@@ -350,3 +355,250 @@
                     root.manager.current = "menu"
                     game_over_layout.opacity = 0
                     game_over_layout.disabled = True
+
+    # หน้า WON
+    BoxLayout:
+        id: game_won_layout
+        orientation: "vertical"
+        opacity: 0
+        disabled: True
+        pos_hint: {'center_y': 0.5} if self.opacity == 1 else {'center_y': 5.0}
+        spacing: 20
+        padding: [60, 80, 60, 80]
+        canvas.before:
+            Color:
+                rgba: 0, 0, 0, 0.88
+            Rectangle:
+                pos: self.pos
+                size: self.size
+            Color:
+                rgba: 0.27, 1, 0.47, 0.6
+            Line:
+                points: self.x, self.top - 2, self.right, self.top - 2
+                width: 2
+            Color:
+                rgba: 0.27, 1, 0.47, 0.6
+            Line:
+                points: self.x, self.y + 2, self.right, self.y + 2
+                width: 2
+
+        Label:
+            text: "* * *"
+            font_size: 100
+            bold: True
+            color: 1, 0.85, 0.15, 1
+            halign: "center"
+            size_hint_y: None
+            height: 70
+
+        Label:
+            text: "[color=#44FF77][b]YOU WIN![/b][/color]"
+            markup: True
+            font_size: 72
+            halign: "center"
+            size_hint_y: None
+            height: 100
+
+        Label:
+            text: "[color=#44FF7755]________________________[/color]"
+            markup: True
+            font_size: 20
+            halign: "center"
+            size_hint_y: None
+            height: 30
+
+        Label:
+            text: "[color=#aaaaaa]Puzzle Master![/color]"
+            markup: True
+            font_size: 26
+            italic: True
+            halign: "center"
+            size_hint_y: None
+            height: 50
+
+        Widget:
+            size_hint_y: None
+            height: 30
+
+        # ปุ่ม Next Level
+        AnchorLayout:
+            size_hint_y: None
+            height: 70
+            anchor_x: "center"
+            Button:
+                text: "Next Level"
+                font_size: 22
+                bold: True
+                size_hint: None, None
+                size: 260, 58
+                background_normal: ''
+                background_color: 0.16, 0.72, 0.38, 1
+                color: 1, 1, 1, 1
+                canvas.before:
+                    Color:
+                        rgba: 0.1, 0.55, 0.28, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [12]
+                on_press:
+                    game_won_layout.opacity = 0
+                    game_won_layout.disabled = True
+
+        # ปุ่ม Back to Menu
+        AnchorLayout:
+            size_hint_y: None
+            height: 70
+            anchor_x: "center"
+            Button:
+                text: "Back to Menu"
+                font_size: 22
+                bold: True
+                size_hint: None, None
+                size: 260, 58
+                background_normal: ''
+                background_color: 0.22, 0.22, 0.25, 1
+                color: 0.7, 0.7, 0.7, 1
+                canvas.before:
+                    Color:
+                        rgba: 0.18, 0.18, 0.21, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [12]
+                on_press:
+                    game_board.restart_game()
+                    root.manager.current = "menu"
+                    game_won_layout.opacity = 0
+                    game_won_layout.disabled = True
+
+    # Pause Menu
+    BoxLayout:
+        id: pause_layout
+        orientation: "vertical"
+        opacity: 0
+        disabled: True
+        pos_hint: {'center_y': 0.5} if self.opacity == 1 else {'center_y': 5.0}
+        spacing: 20
+        padding: [60, 100, 60, 100]
+        canvas.before:
+            Color:
+                rgba: 0, 0, 0, 0.88 
+            Rectangle:
+                pos: self.pos
+                size: self.size
+            Color:
+                rgba: 0.27, 1, 0.47, 0.6
+            Line:
+                points: self.x, self.top - 2, self.right, self.top - 2
+                width: 2
+            Color:
+                rgba: 0.27, 1, 0.47, 0.6
+            Line:
+                points: self.x, self.y + 2, self.right, self.y + 2
+                width: 2
+
+        Label:
+            text: "[color=#44FF77][b]PAUSED[/b][/color]"
+            markup: True
+            font_size: 64
+            halign: "center"
+            size_hint_y: None
+            height: 80
+
+        Label:
+            text: "[color=#44ff7755]________________________[/color]"
+            markup: True
+            font_size: 20
+            halign: "center"
+            size_hint_y: None
+            height: 30
+
+        Label:
+            text: "[color=#aaaaaa]Take a deep breath and plan your move...[/color]"
+            markup: True
+            font_size: 20
+            italic: True
+            halign: "center"
+            size_hint_y: None
+            height: 40
+
+        Widget:
+            size_hint_y: None
+            height: 30
+
+        # ปุ่ม Resume
+        AnchorLayout:
+            size_hint_y: None
+            height: 70
+            anchor_x: "center"
+            Button:
+                text: "Resume"
+                font_size: 22
+                bold: True
+                size_hint: None, None
+                size: 260, 58
+                background_normal: ''
+                background_color: 0.16, 0.72, 0.38, 1
+                color: 1, 1, 1, 1
+                canvas.before:
+                    Color:
+                        rgba: 0.1, 0.55, 0.28, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [12]
+                on_press: game_board.toggle_pause()
+
+        # ปุ่ม Retry
+        AnchorLayout:
+            size_hint_y: None
+            height: 70
+            anchor_x: "center"
+            Button:
+                text: "Retry"
+                font_size: 22
+                bold: True
+                size_hint: None, None
+                size: 260, 58
+                background_normal: ''
+                background_color: 0.9, 0.72, 0.08, 1
+                color: 0.1, 0.08, 0.0, 1
+                canvas.before:
+                    Color:
+                        rgba: 0.75, 0.58, 0.04, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [12]
+                on_press:
+                    game_board.restart_game()
+                    game_board.toggle_pause()
+
+        # ปุ่ม Menu
+        AnchorLayout:
+            size_hint_y: None
+            height: 70
+            anchor_x: "center"
+            Button:
+                text: "Main Menu"
+                font_size: 22
+                bold: True
+                size_hint: None, None
+                size: 260, 58
+                background_normal: ''
+                background_color: 0.22, 0.22, 0.25, 1
+                color: 0.7, 0.7, 0.7, 1
+                canvas.before:
+                    Color:
+                        rgba: 0.18, 0.18, 0.21, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [12]
+                on_press:
+                    root.manager.current = "menu"
+                    game_board.toggle_pause()
+
+<LevelScreen>:
+    BoxLayout:

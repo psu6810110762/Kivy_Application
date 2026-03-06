@@ -26,6 +26,7 @@ class SnakeGame(Widget):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.engine = GameEngine()
+        self.is_paused = False
         Window.bind(on_key_down=self.on_key_down)
         
         # ผูกฟังก์ชันวาดเข้ากับการเปลี่ยนขนาดหน้าจอ
@@ -77,8 +78,20 @@ class SnakeGame(Widget):
                 Color(0.1, 0.5, 0.1, 1)
                 Rectangle(pos=(self.x + hx*cell, self.y + hy*cell), size=(cell, cell))
 
+        app = App.get_running_app()
+        if app and app.root and app.root.has_screen("game"):
+            screen = app.root.get_screen("game")
+            
+            current_level = state["current_level"] + 1
+            apples_left = len(state["apples"])
+            
+            if 'level_label' in screen.ids:
+                screen.ids.level_label.text = f"[color=#FFD84D][b]Level {current_level}[/b][/color]"
+            if 'apple_label' in screen.ids:
+                screen.ids.apple_label.text = f"[color=#FF5555][b]Apples: {apples_left}[/b][/color]"
+
     def on_key_down(self, window, key, *args):
-        if self.engine.game_over:
+        if self.is_paused or self.engine.game_over or self.engine.game_won: #ล็อกไม่ให้เดินถ้าอยู่ในหน้านี้
             return
         if key == 276:   # Left
             self.engine.step(-1, 0)
@@ -91,21 +104,45 @@ class SnakeGame(Widget):
         self.draw_elements()
 
         # เช็คว่าตาย/ตก หรือยัง
-        if self.engine.game_over:
-            app = App.get_running_app()
+        app = App.get_running_app()
+        if app and app.root and app.root.has_screen("game"):
             screen = app.root.get_screen("game")
-            screen.ids.game_over_layout.opacity = 1
-            screen.ids.game_over_layout.disabled = False
+            
+            # กรณีตกเหว (Game Over)
+            if self.engine.game_over:
+                screen.ids.game_over_layout.opacity = 1
+                screen.ids.game_over_layout.disabled = False
+            
+            # กรณีชนะเกม (Game Won)
+            elif self.engine.game_won:
+                screen.ids.game_won_layout.opacity = 1
+                screen.ids.game_won_layout.disabled = False
 
     def restart_game(self):
         self.engine.restart_game()
 
         app = App.get_running_app()
-        screen = app.root.get_screen("game")
-        screen.ids.game_over_layout.opacity = 0
-        screen.ids.game_over_layout.disabled = True
-        
+        if app and app.root and app.root.has_screen("game"):
+            screen = app.root.get_screen("game")
+            screen.ids.game_over_layout.opacity = 0
+            screen.ids.game_over_layout.disabled = True
+            
+            # ปิดหน้าต่างชนะด้วย
+            if 'game_won_layout' in screen.ids:
+                screen.ids.game_won_layout.opacity = 0
+                screen.ids.game_won_layout.disabled = True
+                
         self.draw_elements()
+
+    def toggle_pause(self):
+        self.is_paused = not self.is_paused
+        
+        app = App.get_running_app()
+        if app and app.root and app.root.has_screen("game"):
+            screen = app.root.get_screen("game")
+            if 'pause_layout' in screen.ids:
+                screen.ids.pause_layout.opacity = 1 if self.is_paused else 0
+                screen.ids.pause_layout.disabled = not self.is_paused
 
 class SnakeApp(App):
     def build(self):
