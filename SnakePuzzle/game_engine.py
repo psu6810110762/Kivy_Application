@@ -1,3 +1,4 @@
+#game_engine.py
 from levels import LEVELS
 
 class GameEngine:
@@ -29,16 +30,29 @@ class GameEngine:
             self.snake = [(x, y - 1) for x, y in self.snake]
 
     def move(self, dx, dy):
-        new_positions = [(x+dx, y+dy) for x,y in self.snake]
-        for pos in new_positions:
-            if pos in self.walls:
-                return False
-        # กันชนตัวเอง
-        if len(set(new_positions)) != len(new_positions):
-            return False
-        self.snake = new_positions
-        return True
+        head_x, head_y = self.snake[0]
+        new_head = (head_x + dx, head_y + dy)
 
+    # กันออกนอกขอบหน้าจอ
+        if new_head[0] < 0 or new_head[1] < 0:
+            return False
+
+    # ❌ เดินเข้าด้านข้างของ wall ไม่ได้
+    # wall tile มีพื้นที่ทั้งช่อง — ถ้าหัวจะไปอยู่ใน wall = ชน
+    # แต่งูเดิน "บน" wall ได้ (y = wall_y + 1)
+    # ดังนั้นเช็คว่า new_head ตรงกับ wall tile ไหม
+        if new_head in self.walls:
+            return False
+
+    # กันชนตัวเอง (ยกเว้นหาง เพราะหางจะขยับออกไป)
+        body_without_tail = self.snake[:-1]
+        if new_head in body_without_tail:
+            return False
+
+    # หัวใหม่ + ตัวเดิมตัดหางออก
+        self.snake = [new_head] + self.snake[:-1]
+        return True
+    
     def step(self, dx, dy):
 
         if self.game_over:
@@ -56,12 +70,6 @@ class GameEngine:
             self.check_apple()
             self.check_portal()
 
-    def check_apple(self):
-        head = self.snake[0]
-
-        if head in self.apples:
-            self.apples.remove(head)
-            self.snake.append(self.snake[-1])
 
     def check_portal(self):
         if self.snake[0] == self.portal:
@@ -70,6 +78,7 @@ class GameEngine:
 
     def get_state(self):
         return {
+            "background": self.background,
             "snake": self.snake,
             "walls": self.walls,
             "apples": self.apples,
@@ -88,8 +97,20 @@ class GameEngine:
             if key not in level:
                 raise ValueError(f"Level missing key: {key}")
 
+        self.background = level.get("background", "assets/bg_sky.png")  # ← เพิ่ม
+        self.snake  = list(level["snake"])
+        self.walls  = set(level["walls"])
+        self.apples = list(level["apples"])
+        self.portal = level["portal"]
         self.game_over = False
         self.level_complete = False
+
+    def check_apple(self):
+        head = self.snake[0]
+        if head in self.apples:
+            self.apples.remove(head)
+        # ✅ ต่อหางเพิ่ม 1 ช่อง (ไม่ตัดหางออกรอบนี้)
+            self.snake.append(self.snake[-1])
 
     def reset_level(self):
         self.load_level(self.current_level)
