@@ -168,6 +168,14 @@ class GameBoard(Widget):
                 Line(points=[ox+wx*c, oy+wy*c+c,
                               ox+wx*c+c, oy+wy*c+c], width=2)
 
+            # rocks
+            Color(0.5, 0.5, 0.5, 1)
+            for (rx, ry) in state["rocks"]:
+                Rectangle(pos=(ox+rx*c, oy+ry*c), size=(c, c))
+            # เส้นขอบหิน
+            Color(0.35, 0.35, 0.35, 1)
+            for (rx, ry) in state["rocks"]:
+                Line(rectangle=(ox+rx*c, oy+ry*c, c, c), width=1.5)
     
             # apples
             self.draw_apple(state["apples"], ox, oy, c)
