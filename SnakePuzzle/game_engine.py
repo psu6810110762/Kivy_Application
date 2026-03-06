@@ -5,8 +5,16 @@ from levels import LEVELS
 class GameEngine:
 
     def __init__(self):
-        self.current_level = 0
-        self.game_won = False
+        self.current_level  = 0
+        self.game_won       = False
+        self.snake          = []
+        self.walls          = set()
+        self.apples         = []
+        self.portal         = (0, 0)
+        self.rocks          = []
+        self.background     = "assets/bg_sky.png"
+        self.game_over      = False
+        self.level_complete = False
         self.load_level(self.current_level)
 
     # ------------------------------------------------------------------
@@ -16,16 +24,14 @@ class GameEngine:
             supported = False
             for x, y in self.snake:
                 below = (x, y - 1)
-                # มีพื้นหรือหินรองรับ
                 if below in self.walls or below in self.rocks:
                     supported = True
                     break
-                # ตกออกนอกหน้าจอ
                 if y - 1 < 0:
                     self.game_over = True
                     return
             if supported:
-                break  # ออกจาก loop งู แล้วไปทำ gravity หินต่อ
+                break
             self.snake = [(x, y - 1) for x, y in self.snake]
 
         # ── gravity หิน ─────────────────────────────────────────────────
@@ -33,11 +39,9 @@ class GameEngine:
         while changed:
             changed = False
             for i, (rx, ry) in enumerate(self.rocks):
-                # ตกออกนอกหน้าจอ — ลบหินออก
                 if ry - 1 < 0:
                     continue
                 below = (rx, ry - 1)
-                # ไม่มีพื้นและไม่มีหินรองรับ → ตก
                 if below not in self.walls and below not in self.rocks:
                     self.rocks[i] = (rx, ry - 1)
                     changed = True
@@ -47,27 +51,22 @@ class GameEngine:
         head_x, head_y = self.snake[0]
         new_head = (head_x + dx, head_y + dy)
 
-        # กันออกนอกขอบหน้าจอ
         if new_head[0] < 0 or new_head[1] < 0:
             return False
 
         # ชนก้อนหิน → ดันหิน
         if new_head in self.rocks:
             rock_new = (new_head[0] + dx, new_head[1] + dy)
-            # หินชนกำแพง หรือชนหินก้อนอื่น หรือนอกขอบ = ดันไม่ได้
             if (rock_new in self.walls or
                 rock_new in self.rocks or
                 rock_new[0] < 0 or rock_new[1] < 0):
                 return False
-            # ดันหินได้
             self.rocks.remove(new_head)
             self.rocks.append(rock_new)
 
-        # ชนกำแพง
         if new_head in self.walls:
             return False
 
-        # ชนตัวเอง
         if new_head in self.snake[:-1]:
             return False
 
@@ -79,12 +78,11 @@ class GameEngine:
         if self.game_over:
             return
 
+        # ถ้าจบด่านแล้วห้ามเดินต่อ
         if self.level_complete:
-            self.next_level()
             return
 
         moved = self.move(dx, dy)
-
         if moved:
             self.apply_gravity()
             self.check_apple()
@@ -101,6 +99,7 @@ class GameEngine:
     def check_portal(self):
         if self.snake[0] == self.portal:
             self.level_complete = True
+            self.next_level()  # ← ไปด่านถัดไปทันที
 
     # ------------------------------------------------------------------
     def get_state(self):
@@ -148,5 +147,5 @@ class GameEngine:
 
     def restart_game(self):
         self.current_level = 0
-        self.game_won = False
+        self.game_won      = False
         self.load_level(self.current_level)
