@@ -214,6 +214,7 @@
                         pos: self.pos
                         size: self.size
                         radius: [10]
+                on_press: game_board.restart_game()
 
             Button:
                 text: "Menu"
@@ -321,9 +322,7 @@
                         pos: self.pos
                         size: self.size
                         radius: [12]
-                on_press:
-                    game_over_layout.opacity = 0
-                    game_over_layout.disabled = True
+                on_press: game_board.restart_game()
 
         # ปุ่ม Back to Menu
         AnchorLayout:

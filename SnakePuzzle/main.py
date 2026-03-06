@@ -97,6 +97,16 @@ class SnakeGame(Widget):
             screen.ids.game_over_layout.opacity = 1
             screen.ids.game_over_layout.disabled = False
 
+    def restart_game(self):
+        self.engine.restart_game()
+
+        app = App.get_running_app()
+        screen = app.root.get_screen("game")
+        screen.ids.game_over_layout.opacity = 0
+        screen.ids.game_over_layout.disabled = True
+        
+        self.draw_elements()
+
 class SnakeApp(App):
     def build(self):
         sm = ScreenManager()
