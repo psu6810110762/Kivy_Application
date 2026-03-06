@@ -92,6 +92,11 @@ class GameEngine:
     def load_level(self, level_index):
         level = LEVELS[level_index]
 
+        self.snake = list(level["snake"])
+        self.walls = list(level["walls"])
+        self.apples = list(level["apples"])
+        self.portal = level["portal"]
+
         required_keys = ["snake", "walls", "apples", "portal"]
         for key in required_keys:
             if key not in level:
