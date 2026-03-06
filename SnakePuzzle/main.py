@@ -78,6 +78,8 @@ class SnakeGame(Widget):
                 Rectangle(pos=(self.x + hx*cell, self.y + hy*cell), size=(cell, cell))
 
     def on_key_down(self, window, key, *args):
+        if self.engine.game_over:
+            return
         if key == 276:   # Left
             self.engine.step(-1, 0)
         elif key == 275: # Right
@@ -87,6 +89,13 @@ class SnakeGame(Widget):
             
         # สั่งให้วาดกราฟิกใหม่ทุกครั้งที่กดปุ่มเดิน
         self.draw_elements()
+
+        # เช็คว่าตาย/ตก หรือยัง
+        if self.engine.game_over:
+            app = App.get_running_app()
+            screen = app.root.get_screen("game")
+            screen.ids.game_over_layout.opacity = 1
+            screen.ids.game_over_layout.disabled = False
 
 class SnakeApp(App):
     def build(self):
