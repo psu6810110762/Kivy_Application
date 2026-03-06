@@ -2,8 +2,9 @@ from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.core.window import Window
 from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.graphics import (Color, Line, Rectangle,
-                            Ellipse, RoundedRectangle)
+from kivy.graphics import (Color, Line, Rectangle, Ellipse,
+                            RoundedRectangle, PushMatrix,
+                            PopMatrix, Rotate, Translate)
 
 from game_engine import GameEngine
 
@@ -64,84 +65,72 @@ class GameBoard(Widget):
     # draw helpers
     # ------------------------------------------------------------------
     def draw_snake(self, snake, ox, oy, c):
+        if not snake:
+            return
+
         for i, (sx, sy) in enumerate(snake):
             x = ox + sx * c
             y = oy + sy * c
 
+        # หาทิศทางของแต่ละ segment
             if i == 0:
-                # หัวงู
-                Color(0.1, 0.80, 0.35, 1)
-                RoundedRectangle(pos=(x+2, y+2), size=(c-4, c-4), radius=[10])
-                # ตาขาว
-                Color(1, 1, 1, 1)
-                Ellipse(pos=(x+7,  y+c-17), size=(9, 9))
-                Ellipse(pos=(x+c-16, y+c-17), size=(9, 9))
-                # ตาดำ
-                Color(0.05, 0.05, 0.05, 1)
-                Ellipse(pos=(x+9,  y+c-15), size=(5, 5))
-                Ellipse(pos=(x+c-14, y+c-15), size=(5, 5))
-                # ลิ้นแฉก
-                Color(0.95, 0.2, 0.2, 1)
-                Line(points=[x+c*0.5, y+4,
-                              x+c*0.35, y-4], width=1.5)
-                Line(points=[x+c*0.5, y+4,
-                              x+c*0.65, y-4], width=1.5)
+            # หัวงู — หาทิศจาก head → segment ถัดไป
+                if len(snake) > 1:
+                    nx, ny = snake[1]
+                    dx, dy = sx - nx, sy - ny
+                else:
+                    dx, dy = 1, 0
+                source = 'assets/head.png'
+
+            elif i == len(snake) - 1:
+            # หาง — หาทิศจาก segment ก่อนหน้า → tail
+                px, py = snake[i-1]
+                dx, dy = sx - px, sy - py
+                source = 'assets/tail.png'
+
             else:
-                # ตัวงู ไล่สีเข้มขึ้นตามความยาว
-                t = i / max(len(snake) - 1, 1)
-                Color(0.05, 0.65 - t * 0.2, 0.25, 1)
-                RoundedRectangle(pos=(x+4, y+4), size=(c-8, c-8), radius=[7])
-                # ลายเกล็ด
-                Color(0.0, 0.45 - t * 0.1, 0.15, 0.5)
-                Ellipse(pos=(x+10, y+10), size=(c-20, c-20))
+            # ตัวงู — หาทิศจาก segment ก่อน → ถัดไป
+                px, py = snake[i-1]
+                dx, dy = px - sx, py - sy
+                source = 'assets/body.png'
+
+        # หมุนรูปตามทิศทาง
+        # dx,dy:  (1,0)=ขวา  (-1,0)=ซ้าย  (0,1)=ขึ้น  (0,-1)=ลง
+            angle_map = {
+                ( 1,  0): 0,    # ขวา
+                (-1,  0): 180,  # ซ้าย
+                ( 0,  1): 90,   # ขึ้น
+                ( 0, -1): 270,  # ลง
+            }
+            angle = angle_map.get((dx, dy), 0)
+
+            Color(1, 1, 1, 1)
+            PushMatrix()
+            Translate(x + c/2, y + c/2)
+            Rotate(angle=angle, axis=(0, 0, 1), origin=(0, 0))
+            Rectangle(
+                source=source,
+                pos=(-c/2, -c/2),
+                size=(c, c))
+            PopMatrix()
 
     def draw_apple(self, apples, ox, oy, c):
+        Color(1, 1, 1, 1)
         for (ax, ay) in apples:
-            x = ox + ax * c
-            y = oy + ay * c
-            m = c * 0.1
-
-            # ลูกแอปเปิ้ล
-            Color(0.88, 0.12, 0.12, 1)
-            Ellipse(pos=(x+m, y+m), size=(c-m*2, c-m*2))
-            # เงาด้านซ้ายล่าง
-            Color(0.55, 0.05, 0.05, 0.55)
-            Ellipse(pos=(x+m, y+m), size=(c*0.4, c*0.4))
-            # แสงสะท้อนด้านขวาบน
-            Color(1, 0.65, 0.65, 0.65)
-            Ellipse(pos=(x+c*0.52, y+c*0.50), size=(c*0.22, c*0.22))
-            # ก้าน
-            Color(0.35, 0.20, 0.04, 1)
-            Line(points=[x+c*0.50, y+c-m*1.5,
-                          x+c*0.62, y+c+2], width=2.5)
-            # ใบ
-            Color(0.18, 0.68, 0.18, 1)
-            Ellipse(pos=(x+c*0.50, y+c-m*2), size=(c*0.28, c*0.18))
+            Rectangle(
+            source='assets/apple.png',
+            pos=(ox + ax*c, oy + ay*c),
+            size=(c, c)
+        )
 
     def draw_portal(self, portal, ox, oy, c):
         px, py = portal
-        x  = ox + px * c
-        y  = oy + py * c
-        cx = x + c / 2
-        cy = y + c / 2
-
-        # วงนอกสุด — ม่วงจาง
-        Color(0.55, 0.05, 0.95, 0.35)
-        Ellipse(pos=(x+2, y+2), size=(c-4, c-4))
-        # วงแหวนชั้นนอก
-        Color(0.80, 0.25, 1.0, 0.80)
-        Line(circle=(cx, cy, c*0.44), width=3)
-        # วงแหวนชั้นกลาง
-        Color(0.95, 0.60, 1.0, 1)
-        Line(circle=(cx, cy, c*0.28), width=2)
-        # แกนกลางสว่าง
         Color(1, 1, 1, 1)
-        Ellipse(pos=(cx-5, cy-5), size=(10, 10))
-        # เส้นรัศมี 4 ทิศ
-        Color(0.85, 0.45, 1.0, 0.55)
-        for dx, dy in [(1,0),(-1,0),(0,1),(0,-1)]:
-            Line(points=[cx + dx*c*0.28, cy + dy*c*0.28,
-                          cx + dx*c*0.44, cy + dy*c*0.44], width=1.5)
+        Rectangle(
+        source='assets/portal.png',
+        pos=(ox + px*c, oy + py*c),
+        size=(c, c)
+    )
 
     # ------------------------------------------------------------------
     # redraw
@@ -179,6 +168,7 @@ class GameBoard(Widget):
                 Line(points=[ox+wx*c, oy+wy*c+c,
                               ox+wx*c+c, oy+wy*c+c], width=2)
 
+    
             # apples
             self.draw_apple(state["apples"], ox, oy, c)
 
@@ -186,8 +176,10 @@ class GameBoard(Widget):
             if not state["level_complete"]:
                 self.draw_portal(state["portal"], ox, oy, c)
 
+    
+
             # snake
-            self.draw_snake(state["snake"], ox, oy, c)
+            self.draw_snake(state["snake"], ox, oy, c)  
 
             # overlay — game over
             if state["game_over"]:
