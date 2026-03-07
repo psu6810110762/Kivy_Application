@@ -80,7 +80,7 @@ class GameBoard(Widget):
         """เรียกทุก 0.08 วินาที ให้งูตกทีละ step"""
         still_falling = self.engine.apply_gravity()
         self.redraw()
-        if not still_falling or self.engine.game_over:
+        if  self.engine.game_over or not still_falling:
             self._fall_event.cancel()
             self._fall_event = None
             if not self.engine.game_over:

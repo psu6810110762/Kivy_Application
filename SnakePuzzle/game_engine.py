@@ -18,6 +18,7 @@ class GameEngine:
                 supported = True
                 break
             if y - 1 < 0:
+                self.game_over = True 
                 self.falling = True
                 self.snake = [(x, y - 1) for x, y in self.snake]
                 return True  # ยังตกอยู่
