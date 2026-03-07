@@ -30,6 +30,7 @@ class GameBoard(Widget):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.engine = GameEngine()
+        self._fall_event = None
         self.bind(size=self.redraw, pos=self.redraw)
         self._keyboard = Window.request_keyboard(self._on_keyboard_closed, self)
         self._keyboard.bind(on_key_down=self.on_key_down)
@@ -43,6 +44,30 @@ class GameBoard(Widget):
         if getattr(self, 'is_paused', False):
             return
         key = keycode[0]
+
+        if self.engine.game_over:
+            if text == 'r' or key == 13:
+                self.engine.reset_level()
+                self.redraw()
+            return
+
+        # ถ้ากำลัง falling อยู่ ไม่รับ input
+        if self._fall_event:
+            return
+
+        key_map = {
+            276: (-1, 0),
+            275: ( 1, 0),
+            273: ( 0, 1),
+            274: ( 0,-1),
+        }
+        if key in key_map:
+            self.engine.step(*key_map[key])
+            self._start_fall_animation()  # ← เรียก fall animation
+            self.redraw()
+        elif text == 'r':
+            self.engine.reset_level()
+            self.redraw()
 
         # ถ้า game over กด R หรือ Enter เพื่อเล่นใหม่
         if self.engine.game_over:
