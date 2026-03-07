@@ -193,13 +193,6 @@ class GameBoard(Widget):
                 size=self.size
             )
 
-            # grid จางๆ ทับ background
-            Color(0, 0, 0, 0.15)
-            for x in range(0, int(self.width) + c, c):
-                Line(points=[ox+x, oy, ox+x, oy+self.height])
-            for y in range(0, int(self.height) + c, c):
-                Line(points=[ox, oy+y, ox+self.width, oy+y])
-
             # walls
             Color(0.35, 0.38, 0.55, 0.85)
             for (wx, wy) in state["walls"]:
