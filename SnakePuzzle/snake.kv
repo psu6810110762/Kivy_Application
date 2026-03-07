@@ -48,6 +48,19 @@
             rounded_rectangle: self.x+1, self.y+1, self.width-2, self.height-2, 6
             width: 1
 
+<PortalButton@Button>:
+    background_normal: ''
+    background_color: 0.08, 0.09, 0.16, 1
+    color: 0.75, 0.20, 1.00, 1  # สีม่วง Portal
+    font_size: 16
+    bold: True
+    canvas.before:
+        Color:
+            rgba: 0.75, 0.20, 1.00, 0.6
+        Line:
+            rounded_rectangle: self.x+1, self.y+1, self.width-2, self.height-2, 6
+            width: 1.5
+
 <LevelButton@Button>:
     background_normal: ''
     background_color: 0.08, 0.09, 0.16, 1
@@ -165,7 +178,7 @@
                 size_hint_y: None
                 height: 12
 
-            GhostButton:
+            PortalButton:
                 text: '☰  SELECT LEVEL'
                 size_hint_y: None
                 height: 48
