@@ -77,8 +77,7 @@ _d5_walls = {
 }
 
 LEVELS = [
-    
-    
+
     # ด่าน 1
     {
         "name":       "อวกาศ",
@@ -92,21 +91,22 @@ LEVELS = [
     {
         "name":       "ก้าวแรกบนฟ้า",
         "background": "assets/bg_sky.png",      # ← เพิ่ม
-        "snake":  [(3, 5), (2, 5), (1, 5)],
+        "snake":  [(8, 8), (7, 8), (6, 8)],
         "walls":  _d1_walls,
-        "apples": [(9, 5)],
-        "portal": (18, 5),
+        "apples": [(12, 10)],
+        "portal": (8, 14),
     },
     # ด่าน 2
     {
         "name":       "ป่าลึก",
         "background": "assets/bg_forest.png",
-        "snake":  [(3, 5), (2, 5), (1, 5)],
+        "snake":  [(5, 6), (4, 6), (3, 6)],
         "walls":  _d2_walls,
-        "apples": [(9, 5)],
-        "portal": (18, 5),
+        "apples": [(11, 9)],
+        "portal": (14, 10),
+        "rocks":  [(7, 6),(8,8)],
     },
-    
+
 # ด่าน 3
 {
     "name":       "ใต้ทะเล",
