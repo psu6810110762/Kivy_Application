@@ -1,604 +1,298 @@
+#:kivy 2.0
+#:import Window kivy.core.window.Window
+
+# ── สีหลัก ──────────────────────────────────────────────────────────────────
+# bg:      0.05, 0.05, 0.10  (ดำอมน้ำเงิน)
+# panel:   0.08, 0.09, 0.16
+# accent:  0.18, 0.90, 0.50  (เขียว neon)
+# accent2: 0.75, 0.20, 1.00  (ม่วง portal)
+# warn:    0.95, 0.25, 0.25  (แดง apple)
+# text:    0.85, 0.90, 1.00
+
+# ── reusable styles ──────────────────────────────────────────────────────────
+<NeonButton@Button>:
+    background_normal: ''
+    background_color: 0.08, 0.09, 0.16, 1
+    color: 0.18, 0.90, 0.50, 1
+    font_size: 16
+    bold: True
+    canvas.before:
+        Color:
+            rgba: 0.18, 0.90, 0.50, 0.6
+        Line:
+            rounded_rectangle: self.x+1, self.y+1, self.width-2, self.height-2, 6
+            width: 1.5
+
+<DangerButton@Button>:
+    background_normal: ''
+    background_color: 0.08, 0.09, 0.16, 1
+    color: 0.95, 0.35, 0.35, 1
+    font_size: 16
+    bold: True
+    canvas.before:
+        Color:
+            rgba: 0.95, 0.35, 0.35, 0.5
+        Line:
+            rounded_rectangle: self.x+1, self.y+1, self.width-2, self.height-2, 6
+            width: 1.5
+
+<GhostButton@Button>:
+    background_normal: ''
+    background_color: 0, 0, 0, 0
+    color: 0.45, 0.50, 0.65, 1
+    font_size: 14
+    canvas.before:
+        Color:
+            rgba: 0.25, 0.28, 0.40, 0.6
+        Line:
+            rounded_rectangle: self.x+1, self.y+1, self.width-2, self.height-2, 6
+            width: 1
+
+# ── MenuScreen ───────────────────────────────────────────────────────────────
 <MenuScreen>:
     canvas.before:
         Color:
-            rgba: 0.07, 0.09, 0.12, 1
+            rgba: 0.05, 0.05, 0.10, 1
         Rectangle:
             pos: self.pos
             size: self.size
+        # เส้น grid พื้นหลัง
+        Color:
+            rgba: 0.10, 0.11, 0.18, 1
+        Line:
+            width: 0.8
+            points: 0, self.height*0.33, self.width, self.height*0.33
+        Line:
+            width: 0.8
+            points: 0, self.height*0.66, self.width, self.height*0.66
+        Line:
+            width: 0.8
+            points: self.width*0.33, 0, self.width*0.33, self.height
+        Line:
+            width: 0.8
+            points: self.width*0.66, 0, self.width*0.66, self.height
+        # glow ตรงกลาง
+        Color:
+            rgba: 0.18, 0.90, 0.50, 0.04
+        Ellipse:
+            pos: self.center_x - 300, self.center_y - 200
+            size: 600, 400
 
-    BoxLayout:
-        orientation: "vertical"
-        spacing: 28
-        padding: [60, 70, 60, 70]
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'center'
 
         BoxLayout:
-            orientation: "vertical"
-            size_hint_y: None
-            height: 130
-            spacing: 4
+            orientation: 'vertical'
+            spacing: 0
+            size_hint: None, None
+            size: 340, 480
+            padding: [0, 0, 0, 0]
 
+            # Logo area
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_y: None
+                height: 180
+                spacing: 8
+
+                # ตัวงูประดับ
+                Label:
+                    text: '🐍'
+                    font_size: 52
+                    size_hint_y: None
+                    height: 70
+
+                Label:
+                    text: 'SNAKE'
+                    font_size: 38
+                    bold: True
+                    color: 0.18, 0.90, 0.50, 1
+                    size_hint_y: None
+                    height: 50
+                    canvas.before:
+                        Color:
+                            rgba: 0.18, 0.90, 0.50, 0.15
+                        Rectangle:
+                            pos: self.x + self.width*0.1, self.y
+                            size: self.width*0.8, self.height
+
+                Label:
+                    text: 'P U Z Z L E'
+                    font_size: 14
+                    letter_spacing: 8
+                    color: 0.45, 0.85, 0.65, 1
+                    size_hint_y: None
+                    height: 28
+
+            # ตัวคั่น
+            Widget:
+                size_hint_y: None
+                height: 24
+                canvas:
+                    Color:
+                        rgba: 0.18, 0.90, 0.50, 0.3
+                    Line:
+                        points: 20, self.center_y, self.width-20, self.center_y
+                        width: 1
+
+            Widget:
+                size_hint_y: None
+                height: 16
+
+            # ปุ่มเมนู
+            NeonButton:
+                text: '▶  START GAME'
+                size_hint_y: None
+                height: 54
+                font_size: 17
+                on_press: root.manager.current = 'game'
+
+            Widget:
+                size_hint_y: None
+                height: 12
+
+            GhostButton:
+                text: '☰  SELECT LEVEL'
+                size_hint_y: None
+                height: 48
+
+            Widget:
+                size_hint_y: None
+                height: 12
+
+            DangerButton:
+                text: '✕  EXIT'
+                size_hint_y: None
+                height: 48
+                on_press: app.stop()
+
+            Widget:
+                size_hint_y: None
+                height: 20
+
+            # version label
             Label:
-                text: "[color=#44FF77][b]SNAKE[/b][/color] [color=#FFD84D][b]PUZZLE[/b][/color]"
-                markup: True
-                font_size: 58
-                halign: "center"
-                valign: "middle"
+                text: 'v1.0  ·  use arrow keys'
+                font_size: 11
+                color: 0.25, 0.28, 0.40, 1
+                size_hint_y: None
+                height: 20
 
-            Label:
-                text: "[color=#ffffff55]_________________________________[/color]"
-                markup: True
-                font_size: 18
-                halign: "center"
-                valign: "middle"
 
-            Label:
-                text: "[color=#aaaaaa]Think. Slither. Solve.[/color]"
-                markup: True
-                font_size: 16
-                italic: True
-                halign: "center"
-                valign: "middle"
-
-        Widget:
-            size_hint_y: None
-            height: 10
-
-        Button:
-            text: "Start Game"
-            font_size: 22
-            bold: True
-            size_hint_y: None
-            height: 62
-            background_normal: ''
-            background_color: 0.16, 0.72, 0.38, 1
-            color: 1, 1, 1, 1
-            canvas.before:
-                Color:
-                    rgba: 0.1, 0.55, 0.28, 1
-                RoundedRectangle:
-                    pos: self.pos
-                    size: self.size
-                    radius: [12]
-            on_press: root.manager.current = "game"
-
-        Button:
-            text: "Select Level"
-            font_size: 22
-            bold: True
-            size_hint_y: None
-            height: 62
-            background_normal: ''
-            background_color: 0.9, 0.72, 0.08, 1
-            color: 0.1, 0.08, 0.0, 1
-            canvas.before:
-                Color:
-                    rgba: 0.75, 0.58, 0.04, 1
-                RoundedRectangle:
-                    pos: self.pos
-                    size: self.size
-                    radius: [12]
-
-        Button:
-            text: "Exit"
-            font_size: 20
-            bold: True
-            size_hint_y: None
-            height: 62
-            background_normal: ''
-            background_color: 0.22, 0.22, 0.25, 1
-            color: 0.7, 0.7, 0.7, 1
-            canvas.before:
-                Color:
-                    rgba: 0.18, 0.18, 0.21, 1
-                RoundedRectangle:
-                    pos: self.pos
-                    size: self.size
-                    radius: [12]
-            on_press: app.stop()
-
+# ── GameScreen ───────────────────────────────────────────────────────────────
 <GameScreen>:
     canvas.before:
         Color:
-            rgba: 0.07, 0.09, 0.12, 1
+            rgba: 0.04, 0.04, 0.08, 1
         Rectangle:
             pos: self.pos
             size: self.size
 
     BoxLayout:
-        orientation: "vertical"
+        orientation: 'vertical'
+        spacing: 0
 
-        # แถบบน
+        # ── แถบบน (HUD) ──────────────────────────────────────────────────
         BoxLayout:
             size_hint_y: None
-            height: 64
-            padding: [24, 0, 24, 0]
-            spacing: 10
+            height: 48
+            padding: [16, 0, 16, 0]
+            spacing: 0
             canvas.before:
                 Color:
-                    rgba: 0.1, 0.13, 0.17, 1
+                    rgba: 0.06, 0.07, 0.13, 1
                 Rectangle:
                     pos: self.pos
                     size: self.size
                 Color:
-                    rgba: 0.44, 1, 0.47, 0.15
-                Rectangle:
-                    pos: self.x, self.y
-                    size: self.width, 2
+                    rgba: 0.18, 0.90, 0.50, 0.25
+                Line:
+                    points: self.x, self.y, self.right, self.y
+                    width: 1.5
 
-            Label:
-                id: level_label
-                text: "[color=#FFD84D][b]Level 1[/b][/color]"
-                markup: True
-                font_size: 22
-                text_size: self.size
-                halign: "left"
-                valign: "middle"
+            # Level badge
+            BoxLayout:
+                size_hint_x: None
+                width: 120
+                spacing: 6
 
-            Label:
-                text: "[color=#44FF77][b]SNAKE PUZZLE[/b][/color]"
-                markup: True
-                font_size: 20
-                text_size: self.size
-                halign: "center"
-                valign: "middle"
+                Label:
+                    text: '◈'
+                    font_size: 18
+                    color: 0.18, 0.90, 0.50, 1
+                    size_hint_x: None
+                    width: 24
 
-            Label:
-                id: apple_label
-                text: "[color=#FF5555][b]Apples: 2[/b][/color]"
-                markup: True
-                font_size: 22
-                text_size: self.size
-                halign: "right"
-                valign: "middle"
+                Label:
+                    id: level_label
+                    text: 'LEVEL  1'
+                    font_size: 15
+                    bold: True
+                    color: 0.85, 0.90, 1.00, 1
+                    halign: 'left'
+                    valign: 'middle'
+                    text_size: self.size
 
-        # พื้นที่เกม
-        SnakeGame:
+            Widget:
+
+            # Apple counter
+            BoxLayout:
+                size_hint_x: None
+                width: 160
+                spacing: 6
+                halign: 'right'
+
+                Label:
+                    text: '🍎'
+                    font_size: 16
+                    size_hint_x: None
+                    width: 24
+
+                Label:
+                    id: apple_label
+                    text: 'APPLES LEFT: 1'
+                    font_size: 13
+                    color: 0.95, 0.45, 0.45, 1
+                    halign: 'right'
+                    valign: 'middle'
+                    text_size: self.size
+
+        # ── พื้นที่เกม ────────────────────────────────────────────────────
+        GameBoard:
             id: game_board
-            canvas.before:
-                Color:
-                    rgba: 0.07, 0.09, 0.12, 1
-                Rectangle:
-                    pos: self.pos
-                    size: self.size
-                Color:
-                    rgba: 0.2, 0.2, 0.2, 1
-                Line:
-                    width: 1
-                    points: self.x, self.y, self.x, self.top
-                Line:
-                    width: 1
-                    points: self.right, self.y, self.right, self.top
 
-        # แถบล่าง
+        # ── แถบล่าง ───────────────────────────────────────────────────────
         BoxLayout:
             size_hint_y: None
-            height: 68
-            spacing: 14
-            padding: [20, 10, 20, 10]
+            height: 56
+            spacing: 10
+            padding: [16, 8, 16, 8]
             canvas.before:
                 Color:
-                    rgba: 0.1, 0.13, 0.17, 1
+                    rgba: 0.06, 0.07, 0.13, 1
                 Rectangle:
                     pos: self.pos
                     size: self.size
                 Color:
-                    rgba: 0.44, 1, 0.47, 0.15
-                Rectangle:
-                    pos: self.x, self.top - 2
-                    size: self.width, 2
+                    rgba: 0.18, 0.90, 0.50, 0.15
+                Line:
+                    points: self.x, self.top, self.right, self.top
+                    width: 1
 
-            Button:
-                text: "Pause"
-                font_size: 18
-                bold: True
-                background_normal: ''
-                background_color: 0.9, 0.72, 0.08, 1
-                color: 0.1, 0.08, 0.0, 1
-                canvas.before:
-                    Color:
-                        rgba: 0.75, 0.58, 0.04, 1
-                    RoundedRectangle:
-                        pos: self.pos
-                        size: self.size
-                        radius: [10]
+            GhostButton:
+                text: '⏸  PAUSE'
+                size_hint_x: 0.25
                 on_press: game_board.toggle_pause()
 
-            Button:
-                text: "Restart"
-                font_size: 18
-                bold: True
-                background_normal: ''
-                background_color: 0.16, 0.72, 0.38, 1
-                color: 1, 1, 1, 1
-                canvas.before:
-                    Color:
-                        rgba: 0.1, 0.55, 0.28, 1
-                    RoundedRectangle:
-                        pos: self.pos
-                        size: self.size
-                        radius: [10]
-                on_press: game_board.restart_game()
-
-            Button:
-                text: "Menu"
-                font_size: 18
-                bold: True
-                background_normal: ''
-                background_color: 0.22, 0.22, 0.25, 1
-                color: 0.7, 0.7, 0.7, 1
-                canvas.before:
-                    Color:
-                        rgba: 0.18, 0.18, 0.21, 1
-                    RoundedRectangle:
-                        pos: self.pos
-                        size: self.size
-                        radius: [10]
-                on_press: 
-                    game_board.restart_game()
-                    root.manager.current = "menu"
-
-    # Game Over
-    BoxLayout:
-        id: game_over_layout
-        orientation: "vertical"
-        opacity: 0
-        disabled: True
-        pos_hint: {'center_y': 0.5} if self.opacity == 1 else {'center_y': 5.0}
-        spacing: 20
-        padding: [60, 80, 60, 80]
-        canvas.before:
-            Color:
-                rgba: 0, 0, 0, 0.88
-            Rectangle:
-                pos: self.pos
-                size: self.size
-                # เส้นขอบแดงเรืองด้านบน
-            Color:
-                rgba: 1, 0.2, 0.2, 0.6
-            Line:
-                points: self.x, self.top - 2, self.right, self.top - 2
-                width: 2
-                # เส้นขอบแดงเรืองด้านล่าง
-            Color:
-                rgba: 1, 0.2, 0.2, 0.6
-            Line:
-                points: self.x, self.y + 2, self.right, self.y + 2
-                width: 2
-
-        # ไอคอนหัวกะโหลก
-        Label:
-            text: "X_X"
-            font_size: 52
-            bold: True
-            color: 0.9, 0.2, 0.2, 1
-            halign: "center"
-            size_hint_y: None
-            height: 70
-
-        # GAME OVER
-        Label:
-            text: "[color=#FF3333][b]GAME OVER[/b][/color]"
-            markup: True
-            font_size: 72
-            halign: "center"
-            size_hint_y: None
-            height: 100
-
-        # เส้นคั่น
-        Label:
-            text: "[color=#ff333355]________________________[/color]"
-            markup: True
-            font_size: 20
-            halign: "center"
-            size_hint_y: None
-            height: 30
-
-        # ข้อความรอง
-        Label:
-            text: "[color=#aaaaaa]You fell into the abyss...[/color]"
-            markup: True
-            font_size: 26
-            italic: True
-            halign: "center"
-            size_hint_y: None
-            height: 50
-
-        Widget:
-            size_hint_y: None
-            height: 30
-
-        # ปุ่ม Retry
-        AnchorLayout:
-            size_hint_y: None
-            height: 70
-            anchor_x: "center"
-            Button:
-                text: "Try Again"
-                font_size: 22
-                bold: True
-                size_hint: None, None
-                size: 260, 58
-                background_normal: ''
-                background_color: 0.16, 0.72, 0.38, 1
-                color: 1, 1, 1, 1
-                canvas.before:
-                    Color:
-                        rgba: 0.1, 0.55, 0.28, 1
-                    RoundedRectangle:
-                        pos: self.pos
-                        size: self.size
-                        radius: [12]
-                on_press: game_board.restart_game()
-
-        # ปุ่ม Back to Menu
-        AnchorLayout:
-            size_hint_y: None
-            height: 70
-            anchor_x: "center"
-            Button:
-                text: "Back to Menu"
-                font_size: 22
-                bold: True
-                size_hint: None, None
-                size: 260, 58
-                background_normal: ''
-                background_color: 0.22, 0.22, 0.25, 1
-                color: 0.7, 0.7, 0.7, 1
-                canvas.before:
-                    Color:
-                        rgba: 0.18, 0.18, 0.21, 1
-                    RoundedRectangle:
-                        pos: self.pos
-                        size: self.size
-                        radius: [12]
+            NeonButton:
+                text: '↺  RESTART'
+                size_hint_x: 0.40
                 on_press:
-                    root.manager.current = "menu"
-                    game_over_layout.opacity = 0
-                    game_over_layout.disabled = True
+                    game_board.engine.reset_level()
+                    game_board.redraw()
 
-    # หน้า WON
-    BoxLayout:
-        id: game_won_layout
-        orientation: "vertical"
-        opacity: 0
-        disabled: True
-        pos_hint: {'center_y': 0.5} if self.opacity == 1 else {'center_y': 5.0}
-        spacing: 20
-        padding: [60, 80, 60, 80]
-        canvas.before:
-            Color:
-                rgba: 0, 0, 0, 0.88
-            Rectangle:
-                pos: self.pos
-                size: self.size
-            Color:
-                rgba: 0.27, 1, 0.47, 0.6
-            Line:
-                points: self.x, self.top - 2, self.right, self.top - 2
-                width: 2
-            Color:
-                rgba: 0.27, 1, 0.47, 0.6
-            Line:
-                points: self.x, self.y + 2, self.right, self.y + 2
-                width: 2
-
-        Label:
-            text: "* * *"
-            font_size: 100
-            bold: True
-            color: 1, 0.85, 0.15, 1
-            halign: "center"
-            size_hint_y: None
-            height: 70
-
-        Label:
-            text: "[color=#44FF77][b]YOU WIN![/b][/color]"
-            markup: True
-            font_size: 72
-            halign: "center"
-            size_hint_y: None
-            height: 100
-
-        Label:
-            text: "[color=#44FF7755]________________________[/color]"
-            markup: True
-            font_size: 20
-            halign: "center"
-            size_hint_y: None
-            height: 30
-
-        Label:
-            text: "[color=#aaaaaa]Puzzle Master![/color]"
-            markup: True
-            font_size: 26
-            italic: True
-            halign: "center"
-            size_hint_y: None
-            height: 50
-
-        Widget:
-            size_hint_y: None
-            height: 30
-
-        # ปุ่ม Next Level
-        AnchorLayout:
-            size_hint_y: None
-            height: 70
-            anchor_x: "center"
-            Button:
-                text: "Next Level"
-                font_size: 22
-                bold: True
-                size_hint: None, None
-                size: 260, 58
-                background_normal: ''
-                background_color: 0.16, 0.72, 0.38, 1
-                color: 1, 1, 1, 1
-                canvas.before:
-                    Color:
-                        rgba: 0.1, 0.55, 0.28, 1
-                    RoundedRectangle:
-                        pos: self.pos
-                        size: self.size
-                        radius: [12]
-                on_press:
-                    game_won_layout.opacity = 0
-                    game_won_layout.disabled = True
-
-        # ปุ่ม Back to Menu
-        AnchorLayout:
-            size_hint_y: None
-            height: 70
-            anchor_x: "center"
-            Button:
-                text: "Back to Menu"
-                font_size: 22
-                bold: True
-                size_hint: None, None
-                size: 260, 58
-                background_normal: ''
-                background_color: 0.22, 0.22, 0.25, 1
-                color: 0.7, 0.7, 0.7, 1
-                canvas.before:
-                    Color:
-                        rgba: 0.18, 0.18, 0.21, 1
-                    RoundedRectangle:
-                        pos: self.pos
-                        size: self.size
-                        radius: [12]
-                on_press:
-                    game_board.restart_game()
-                    root.manager.current = "menu"
-                    game_won_layout.opacity = 0
-                    game_won_layout.disabled = True
-
-    # Pause Menu
-    BoxLayout:
-        id: pause_layout
-        orientation: "vertical"
-        opacity: 0
-        disabled: True
-        pos_hint: {'center_y': 0.5} if self.opacity == 1 else {'center_y': 5.0}
-        spacing: 20
-        padding: [60, 100, 60, 100]
-        canvas.before:
-            Color:
-                rgba: 0, 0, 0, 0.88 
-            Rectangle:
-                pos: self.pos
-                size: self.size
-            Color:
-                rgba: 0.27, 1, 0.47, 0.6
-            Line:
-                points: self.x, self.top - 2, self.right, self.top - 2
-                width: 2
-            Color:
-                rgba: 0.27, 1, 0.47, 0.6
-            Line:
-                points: self.x, self.y + 2, self.right, self.y + 2
-                width: 2
-
-        Label:
-            text: "[color=#44FF77][b]PAUSED[/b][/color]"
-            markup: True
-            font_size: 64
-            halign: "center"
-            size_hint_y: None
-            height: 80
-
-        Label:
-            text: "[color=#44ff7755]________________________[/color]"
-            markup: True
-            font_size: 20
-            halign: "center"
-            size_hint_y: None
-            height: 30
-
-        Label:
-            text: "[color=#aaaaaa]Take a deep breath and plan your move...[/color]"
-            markup: True
-            font_size: 20
-            italic: True
-            halign: "center"
-            size_hint_y: None
-            height: 40
-
-        Widget:
-            size_hint_y: None
-            height: 30
-
-        # ปุ่ม Resume
-        AnchorLayout:
-            size_hint_y: None
-            height: 70
-            anchor_x: "center"
-            Button:
-                text: "Resume"
-                font_size: 22
-                bold: True
-                size_hint: None, None
-                size: 260, 58
-                background_normal: ''
-                background_color: 0.16, 0.72, 0.38, 1
-                color: 1, 1, 1, 1
-                canvas.before:
-                    Color:
-                        rgba: 0.1, 0.55, 0.28, 1
-                    RoundedRectangle:
-                        pos: self.pos
-                        size: self.size
-                        radius: [12]
-                on_press: game_board.toggle_pause()
-
-        # ปุ่ม Retry
-        AnchorLayout:
-            size_hint_y: None
-            height: 70
-            anchor_x: "center"
-            Button:
-                text: "Retry"
-                font_size: 22
-                bold: True
-                size_hint: None, None
-                size: 260, 58
-                background_normal: ''
-                background_color: 0.9, 0.72, 0.08, 1
-                color: 0.1, 0.08, 0.0, 1
-                canvas.before:
-                    Color:
-                        rgba: 0.75, 0.58, 0.04, 1
-                    RoundedRectangle:
-                        pos: self.pos
-                        size: self.size
-                        radius: [12]
-                on_press:
-                    game_board.restart_game()
-                    game_board.toggle_pause()
-
-        # ปุ่ม Menu
-        AnchorLayout:
-            size_hint_y: None
-            height: 70
-            anchor_x: "center"
-            Button:
-                text: "Main Menu"
-                font_size: 22
-                bold: True
-                size_hint: None, None
-                size: 260, 58
-                background_normal: ''
-                background_color: 0.22, 0.22, 0.25, 1
-                color: 0.7, 0.7, 0.7, 1
-                canvas.before:
-                    Color:
-                        rgba: 0.18, 0.18, 0.21, 1
-                    RoundedRectangle:
-                        pos: self.pos
-                        size: self.size
-                        radius: [12]
-                on_press:
-                    root.manager.current = "menu"
-                    game_board.toggle_pause()
-
-<LevelScreen>:
-    BoxLayout:
+            GhostButton:
+                text: '⌂  MENU'
+                size_hint_x: 0.25
+                on_press: root.manager.current = 'menu'
