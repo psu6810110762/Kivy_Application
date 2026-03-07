@@ -25,28 +25,32 @@ _d2_step   = make_platform(10, 10, 7, 8)   # ขั้นบันได
 _d2_walls  = _d2_left | _d2_right | _d2_low | _d2_mid | _d2_step
 
 # ── ด่าน 3 ──────────────────────────────────────────────────────────────────
-_d3_a = make_platform(6,  7,  7, 9)   # แท่งซ้าย
-_d3_b = make_platform(8,  12, 9, 9)   # พื้นบนกลาง
-_d3_c = make_platform(6,  8,  5, 5)   # พื้นล่างซ้าย
-_d3_d = make_platform(13, 13, 10, 13) # แท่งขวา
-_d3_e = make_platform(14, 15, 10, 10) # พื้นขวาบน
-_d3_f = make_platform(13, 14, 6, 8)   # พื้นขวาล่าง
-_d3_walls = _d3_a | _d3_b | _d3_c | _d3_d | _d3_e | _d3_f
+_d3_a = make_platform(5, 5,  9, 9)    # col5 row11 → y=9
+_d3_b = make_platform(5, 5,  8, 8)    # col5 row12 → y=8
+_d3_c = make_platform(6, 6,  7, 8)    # col6 row12-13 → y=7-8
+_d3_d = make_platform(7, 7,  6, 6)    # col7 row14 → y=6
+_d3_e = make_platform(7, 7,  4, 4)    # col7 row16 → y=4
+_d3_f = make_platform(5, 6,  4, 4)    # col5-6 row16 → y=4
+_d3_g = make_platform(8, 8,  9, 9)    # col8 row11 → y=9
+_d3_h = make_platform(9, 12, 9, 9)    # col9-12 row11 → y=9
+_d3_i = make_platform(8, 12, 6, 6)    # col8-12 row14 → y=6
+_d3_j = make_platform(13, 13, 8, 13)  # col13 row7-12 → y=8-13
+_d3_k = make_platform(14, 15, 10, 10) # col14-15 row10 → y=10
+_d3_l = make_platform(13, 14, 6, 6)   # col13-14 row14 → y=6 (รองรับประตู)
+_d3_walls = _d3_a|_d3_b|_d3_c|_d3_d|_d3_e|_d3_f|_d3_g|_d3_h|_d3_i|_d3_j|_d3_k|_d3_l
 
 LEVELS = [
     # ด่าน 1
-    {
-        "name":       "ก้าวแรกบนฟ้า",
-        "background": "assets/bg_sky.png",
-        # งูเริ่ม row 12 → y_kivy = 20-12 = 8, หัวที่ col 9
-        "snake":  [(9, 8), (8, 8), (7, 8)],
-        "walls":  _d1_walls,
-        # แอปเปิ้ล col 11, row 10 → y_kivy = 10+1 = 11 (บนพื้น y=10)
-        "apples": [(12, 10),(6, 10)],
-        "rocks": [(8, 12)],  # ก้อนหินตำแหน่งเริ่มต้น
-        # วางประตูบนพื้นบน col 7, y=11
-        "portal": (10,14),
-    },
+{
+    "name":       "ใต้ทะเล",
+    "background": "assets/bg_ocean.png",
+    "snake":  [(7, 6), (6, 6), (5, 6)],  # row15 → y=5+1=6
+    "walls":  _d3_walls,
+    "apples": [(8, 10), (13, 14)],
+    "portal": (14, 6),
+    "rocks":  [(11, 7)],
+},
+    
     # ด่าน 2
     {
         "name":       "ป่าลึก",
@@ -57,16 +61,20 @@ LEVELS = [
         "portal": (14, 10),
         "rocks":  [(8, 8), (7, 6)],
     },
-    # ด่าน 3
-    {
-        "name":       "ใต้ทะเล",
-        "background": "assets/bg_ocean.png",
-        "snake":  [(8, 6), (7, 6), (6, 6)],
-        "walls":  _d3_walls,
-        "apples": [(8, 10), (13, 14)],
-        "portal": (14, 6),
-        "rocks":  [(11, 8)],
-    },
+    
+# ด่าน 3
+{
+        "name":       "ก้าวแรกบนฟ้า",
+        "background": "assets/bg_sky.png",
+        # งูเริ่ม row 12 → y_kivy = 20-12 = 8, หัวที่ col 9
+        "snake":  [(9, 8), (8, 8), (7, 8)],
+        "walls":  _d1_walls,
+        # แอปเปิ้ล col 11, row 10 → y_kivy = 10+1 = 11 (บนพื้น y=10)
+        "apples": [(12, 10),(6, 10)],
+        "rocks": [(8, 12)],  # ก้อนหินตำแหน่งเริ่มต้น
+        # วางประตูบนพื้นบน col 7, y=11
+        "portal": (10,14),
+},
     # ด่าน 4
     {
         "name":       "ถ้ำมืด",
