@@ -69,25 +69,12 @@ class GameBoard(Widget):
             self.engine.reset_level()
             self.redraw()
 
-        # ถ้า game over กด R หรือ Enter เพื่อเล่นใหม่
-        if self.engine.game_over:
-            if text == 'r' or key == 13:
-                self.engine.reset_level()
-                self.redraw()
-            return
-
-        key_map = {
-            276: (-1,  0),
-            275: ( 1,  0),
-            273: ( 0,  1),
-            274: ( 0, -1),
-        }
-        if key in key_map:
-            self.engine.step(*key_map[key])
-            self.redraw()
-        elif text == 'r':
-            self.engine.reset_level()
-            self.redraw()
+    def _start_fall_animation(self):
+        """เช็คว่าต้องตกมั้ย ถ้าใช่ให้เริ่ม animate"""
+        still_falling = self.engine.apply_gravity()
+        self.redraw()
+        if still_falling:
+            self._fall_event = Clock.schedule_interval(self._fall_step, 0.08)
 
     # ------------------------------------------------------------------
     # draw helpers
