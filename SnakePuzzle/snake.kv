@@ -48,6 +48,19 @@
             rounded_rectangle: self.x+1, self.y+1, self.width-2, self.height-2, 6
             width: 1
 
+<LevelButton@Button>:
+    background_normal: ''
+    background_color: 0.08, 0.09, 0.16, 1
+    color: 0.18, 0.90, 0.50, 1
+    font_size: 28
+    bold: True
+    canvas.before:
+        Color:
+            rgba: (0.18, 0.90, 0.50, 0.6) if self.state == 'normal' else (0.95, 0.85, 0.20, 1)
+        Line:
+            rounded_rectangle: self.x+2, self.y+2, self.width-4, self.height-4, 12
+            width: 1.5
+
 # ── MenuScreen ───────────────────────────────────────────────────────────────
 <MenuScreen>:
     canvas.before:
@@ -156,6 +169,7 @@
                 text: '☰  SELECT LEVEL'
                 size_hint_y: None
                 height: 48
+                on_press: root.manager.current = 'select_level'
 
             Widget:
                 size_hint_y: None
@@ -566,3 +580,76 @@
                     root.manager.current = 'menu'
                     game_board.engine.restart_game()
                     game_board.redraw()
+
+# ── SelectLevelScreen ────────────────────────────────────────────────────────
+<SelectLevelScreen>:
+    canvas.before:
+        Color:
+            rgba: 0.05, 0.05, 0.10, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+        # แสง Glow สวยๆ พื้นหลัง
+        Color:
+            rgba: 0.18, 0.90, 0.50, 0.03
+        Ellipse:
+            pos: self.center_x - 250, self.center_y - 250
+            size: 500, 500
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: [60, 40, 60, 40]
+        spacing: 20
+
+        Label:
+            text: 'SELECT LEVEL'
+            font_size: 42
+            bold: True
+            color: 0.85, 0.90, 1.00, 1
+            letter_spacing: 6
+            size_hint_y: None
+            height: 80
+
+        # ตารางปุ่มเลือกด่าน (สมมติจัดไว้ 6 ด่าน)
+        GridLayout:
+            cols: 3
+            spacing: 24
+            padding: [40, 20, 40, 20]
+
+            LevelButton:
+                text: '1'
+                on_press: app.start_level(0)  # ด่าน 1 คือ index 0
+
+            LevelButton:
+                text: '2'
+                on_press: app.start_level(1)
+
+            LevelButton:
+                text: '3'
+                on_press: app.start_level(2)
+
+            LevelButton:
+                text: '4'
+                on_press: app.start_level(3)
+
+            LevelButton:
+                text: '5'
+                on_press: app.start_level(4)
+
+            LevelButton:
+                text: '6'
+                on_press: app.start_level(5)
+
+        Widget:
+            size_hint_y: None
+            height: 20
+
+        AnchorLayout:
+            size_hint_y: None
+            height: 60
+            anchor_x: 'center'
+            GhostButton:
+                text: '⌂  BACK TO MENU'
+                size_hint: None, None
+                size: 240, 54
+                on_press: root.manager.current = 'menu'

@@ -15,6 +15,8 @@ Window.size = (800, 600)
 class MenuScreen(Screen):
     pass
 
+class SelectLevelScreen(Screen):
+    pass
 
 class GameScreen(Screen):
     def restart(self):
@@ -281,8 +283,30 @@ class SnakeApp(App):
     def build(self):
         sm = ScreenManager()
         sm.add_widget(MenuScreen(name="menu"))
+        sm.add_widget(SelectLevelScreen(name="select_level"))
         sm.add_widget(GameScreen(name="game"))
         return sm
+    
+    def start_level(self, level_index):
+        # ดึงหน้าต่างเกมขึ้นมา
+        screen = self.root.get_screen("game")
+        board = screen.ids.game_board
+        
+        # บังคับโหลดด่านตามเลขที่ส่งมา (Index เริ่มที่ 0)
+        board.engine.current_level = level_index
+        board.engine.game_won = False
+        board.engine.load_level(level_index)
+        
+        # ปิดหน้าต่าง UI ที่อาจจะค้างอยู่ (Pause, Game Over, etc.)
+        board.is_paused = False
+        for layout_id in ['game_over_layout', 'level_complete_layout', 'game_won_layout', 'pause_layout']:
+            if layout_id in screen.ids:
+                screen.ids[layout_id].opacity = 0
+                screen.ids[layout_id].disabled = True
+                
+        # วาดหน้าจอใหม่ แล้วสลับไปหน้าเกม
+        board.redraw()
+        self.root.current = "game"
 
 
 if __name__ == "__main__":
