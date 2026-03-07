@@ -1,0 +1,54 @@
+[33m37d7aaf[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m เพิ่ม animation การขยับ
+[33m2a950b2[m แก้ def appyGravity ให้ ขึ้น GameOver หลังจากตก
+[33mf70edb5[m แก้ไฟล์ main.py อิมพอร์ตสิ่งที่ควรมี
+[33m3626538[m แก้ def _fall_step
+[33me5a87e8[m เพิ่ม def fall_step ในคลาส GameBoard
+[33m7689e87[m เพิ่ม def start_fall_animation ในคลาส GameBoard
+[33m64c3746[m แก้ def on_key_down ใน คลาส GameBoard ให้รู้ว่าตอนงูกำลังตกจะไม่สามารถเคลื่อนที่ได้จนกว่าจะมีบล็อกมารองรับ
+[33m825e060[m แก้ check apple ใน  GameEngine ให้เห็นทันทีว่างูตัวยาวขึ้นหลังจากกินแอปเปิ้ล
+[33m436afc2[m แก้ def applyGravity ให้เห็นตัวงูตกลงมาหากไม่มีพื้นให้บืน
+[33m8eeebf5[m before pull
+[33m1fd87c7[m ทำให้ปุ่ม Pause ใช้ได้จริง
+[33mbe2f2a7[m ทำให้ตัวเลขด่านและแอปเปิ้ล อัปเดตจริงๆ
+[33m20b926c[m fix:merge conflict
+[33m5f34581[m newmachanicgame
+[33m378bee3[m newmachanicgame
+[33m8349ca3[m update level design and main ui
+[33ma6f6134[m ทดสอบด่านแรก
+[33m4512845[m เซตติ้งด่านพื้นฐาน
+[33m12e3e84[m Merge pull request #7 from psu6810110762/UI/UX
+[33m9d78dfb[m feat: เขียนระบบดักจับสถานะ game_won เพื่อแสดงหน้าต่างแห่งชัยชนะ และอัปเดตระบบ restart
+[33ma982a7d[m feat: เพิ่มหน้า YOU WIN
+[33m0cbbabc[m feat:เขียนระบบ lock input ระหว่างอยู่ในหน้า Pause menu
+[33m0d23308[m feat: เพิ่มหน้า Peuse Menu และเชื่อมปุ่ม
+[33md705a58[m Merge pull request #6 from psu6810110762/UI/UX
+[33m18f21de[m fix: แก้บั๊กปุ่มกดไม่ได้หน้า gamescreen
+[33m086c0bf[m feat:เพิ่มฟังค์ชั่นrestartและเชื่อมปุ่มrestart/try again
+[33m4f9e260[m feat:เขียนระบบตรวจสอบการตกเหวเพื่อจะได้ไปหน้า Gameover
+[33m5454be4[m feat: ออกแบบและเพิ่มหน้า gameover
+[33md2a0d2b[m style: เพิ่มขอบให้กำแพงและประตูมิติ / แยกหัวงูกับลำตัว
+[33m0730a22[m Merge pull request #5 from psu6810110762/UI/UX
+[33m1dd9570[m style: ตกแต่งแถบด้านล่างหน้า GameScreen
+[33mc60c0fb[m style: ตกแต่งแถบด้านบนหน้า GameScreen
+[33mc55e3e7[m fix: แก้ Bug GameEngine (กำหนดค่าเริ่มต้นใน load_level)
+[33ma6f81b9[m feat: ผสาน GameBoard เข้ากับ SnakeGame และดึงพิกัดจาก GameEngine มาวาดกราฟิกจริงลงบนจอ
+[33m0a3ae0c[m style: ตกแต่งหน้าเมนูหลัก
+[33m0e4aa9b[m Merge pull request #4 from psu6810110762/UI/UX
+[33ma93fa74[m style: เพิ่ม Label ชื่อเกม SNAKE PUZZLE ปรับขนาดและสีฟอนต์
+[33mab65906[m feat: ออกแบบหน้า MenuScreen เบื้องต้น พร้อมเพิ่มสีพื้นหลังสไตล์ท้องฟ้า
+[33m4f06abb[m Merge branch 'UI/UX' of https://github.com/psu6810110762/Kivy_Application into UI/UX
+[33mf6f94a9[m style: improve snake graphics with head and body segments
+[33m5b17c96[m Merge pull request #3 from psu6810110762/UI/UX
+[33me9fe208[m Merge branch 'main' into UI/UX
+[33m0a1f9ec[m feat: draw mock snake and apple on grid
+[33mfaac9ad[m Merge pull request #2 from psu6810110762/GameLogic
+[33meca46a8[m[33m ([m[1;31morigin/GameLogic[m[33m, [m[1;32mGameLogic[m[33m)[m สร้างไฟล์ levels.py
+[33m91fecca[m feat: implement responsive grid drawing in GameBoard
+[33mb6bead3[m style: add black background to game area
+[33m8647df7[m feat: add basic GameScreen layout with top and bottom bars
+[33m3b4ae66[m feat: setup ScreenManager for UI flow
+[33mcd9bc14[m Merge pull request #1 from psu6810110762/GameLogic
+[33m952d339[m สร้างไฟล์ game_engine.py ย้าย Logic จากคลาส SnakeGame ไปที่ class GameEngine
+[33mfb0266c[m[33m ([m[1;32mUI/UX[m[33m, [m[1;32mLevelDesigner[m[33m)[m main.py แก้คลาส SnakeGame ฟังก์ชั่น apply gravity ให้ตกลงล่างๆเรื่อยๆจนกว่าจะมีบล็อกมารองรับ
+[33m146f472[m main.py ในคลาส SnakeGame เพิ่มฟังก์ชั้่นการเคลื่อนที่ของงู
+[33m0aee9c9[m สร้าง main.py
