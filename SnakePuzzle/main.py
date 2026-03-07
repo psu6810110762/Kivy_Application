@@ -196,32 +196,21 @@ class GameBoard(Widget):
                 Color(0.9, 0.7, 0.1, 0.55)
                 Rectangle(pos=self.pos, size=self.size)
 
-    def restart_game(self):
-        self.engine.restart_game()
-
-        app = App.get_running_app()
-        if app and app.root and app.root.has_screen("game"):
-            screen = app.root.get_screen("game")
-            screen.ids.game_over_layout.opacity = 0
-            screen.ids.game_over_layout.disabled = True
-            
-            # ปิดหน้าต่างชนะด้วย
-            if 'game_won_layout' in screen.ids:
-                screen.ids.game_won_layout.opacity = 0
-                screen.ids.game_won_layout.disabled = True
+            app = App.get_running_app()
+            if app and app.root and app.root.has_screen("game"):
+                screen = app.root.get_screen("game")
                 
-        self.draw_elements()
+                # อัปเดต Level
+                if 'level_label' in screen.ids:
+                    current_lv = state["current_level"] + 1
+                    screen.ids.level_label.text = f'LEVEL  {current_lv}'
+                    
+                # อัปเดต Apple
+                if 'apple_label' in screen.ids:
+                    apples_left = len(state["apples"])
+                    screen.ids.apple_label.text = f'APPLES LEFT: {apples_left}'
 
-    def toggle_pause(self):
-        self.is_paused = not self.is_paused
-        
-        app = App.get_running_app()
-        if app and app.root and app.root.has_screen("game"):
-            screen = app.root.get_screen("game")
-            if 'pause_layout' in screen.ids:
-                screen.ids.pause_layout.opacity = 1 if self.is_paused else 0
-                screen.ids.pause_layout.disabled = not self.is_paused
-
+                    
 class SnakeApp(App):
 
     def build(self):
