@@ -50,6 +50,18 @@ class GameBoard(Widget):
                 self.engine.reset_level()
                 self.redraw()
             return
+        
+        if self.engine.level_complete:
+            if text == 'r' or key == 13: # (แถม: กด Enter เพื่อไปด่านต่อไปได้เลย)
+                self.engine.next_level()
+                self.redraw()
+            return
+        
+        if self.engine.game_won:
+            if text == 'r' or key == 13:
+                self.engine.restart_game()
+                self.redraw()
+            return
 
         # ถ้ากำลัง falling อยู่ ไม่รับ input
         if self._fall_event:
@@ -242,6 +254,18 @@ class GameBoard(Widget):
                     is_over = state["game_over"]
                     screen.ids.game_over_layout.opacity = 1 if is_over else 0
                     screen.ids.game_over_layout.disabled = not is_over
+
+                # เช็คสถานะผ่านด่าน (Level Complete) แต่ยังไม่จบเกมสุดท้าย
+                if 'level_complete_layout' in screen.ids:
+                    is_cleared = state["level_complete"] and not state["game_won"]
+                    screen.ids.level_complete_layout.opacity = 1 if is_cleared else 0
+                    screen.ids.level_complete_layout.disabled = not is_cleared
+
+                # เช็คสถานะ Game Won
+                if 'game_won_layout' in screen.ids:
+                    is_won = state["game_won"]
+                    screen.ids.game_won_layout.opacity = 1 if is_won else 0
+                    screen.ids.game_won_layout.disabled = not is_won
 
     def toggle_pause(self):
         self.is_paused = not self.is_paused
