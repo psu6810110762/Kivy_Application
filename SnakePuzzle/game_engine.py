@@ -129,8 +129,14 @@ class GameEngine:
         head = self.snake[0]
         if head in self.apples:
             self.apples.remove(head)
-        # ✅ ต่อหางเพิ่ม 1 ช่อง (ไม่ตัดหางออกรอบนี้)
-            self.snake.append(self.snake[-1])
+            # ต่อหางในทิศตรงข้ามกับทิศที่หางกำลังเดิน
+            tx, ty = self.snake[-1]
+            if len(self.snake) >= 2:
+                px, py = self.snake[-2]
+                dx, dy = tx - px, ty - py  # ทิศหาง
+            else:
+                dx, dy = 0, -1
+            self.snake.append((tx + dx, ty + dy))
 
     def reset_level(self):
         self.load_level(self.current_level)
