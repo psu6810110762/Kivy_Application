@@ -1,3 +1,4 @@
+#game_engine.py
 from levels import LEVELS
 
 class GameEngine:
@@ -8,38 +9,50 @@ class GameEngine:
         self.load_level(self.current_level)
     
     def apply_gravity(self):
-        while True:
-            supported = False
+        """ตกทีละ 1 step — คืนค่า True ถ้ายังตกอยู่, False ถ้าหยุดแล้ว"""
+        supported = False
 
-            for x, y in self.snake:
-                below = (x, y - 1)
+        for x, y in self.snake:
+            below = (x, y - 1)
+            if below in self.walls:
+                supported = True
+                break
+            if y - 1 < 0:
+                self.falling = True
+                self.snake = [(x, y - 1) for x, y in self.snake]
+                return True  # ยังตกอยู่
 
-                # มีพื้นจริงรองรับ
-                if below in self.walls:
-                    supported = True
-                    break
+        if supported:
+            self.falling = False
+            return False  # หยุดแล้ว
 
-                # ตกเหว
-                if y - 1 < 0:
-                    self.game_over = True
-                    return
-
-            if supported:
-                return
-
-            self.snake = [(x, y - 1) for x, y in self.snake]
+        self.snake = [(x, y - 1) for x, y in self.snake]
+        return True  # ยังตกอยู่
 
     def move(self, dx, dy):
-        new_positions = [(x+dx, y+dy) for x,y in self.snake]
-        for pos in new_positions:
-            if pos in self.walls:
-                return False
-        # กันชนตัวเอง
-        if len(set(new_positions)) != len(new_positions):
-            return False
-        self.snake = new_positions
-        return True
+        head_x, head_y = self.snake[0]
+        new_head = (head_x + dx, head_y + dy)
 
+    # กันออกนอกขอบหน้าจอ
+        if new_head[0] < 0 or new_head[1] < 0:
+            return False
+
+    # ❌ เดินเข้าด้านข้างของ wall ไม่ได้
+    # wall tile มีพื้นที่ทั้งช่อง — ถ้าหัวจะไปอยู่ใน wall = ชน
+    # แต่งูเดิน "บน" wall ได้ (y = wall_y + 1)
+    # ดังนั้นเช็คว่า new_head ตรงกับ wall tile ไหม
+        if new_head in self.walls:
+            return False
+
+    # กันชนตัวเอง (ยกเว้นหาง เพราะหางจะขยับออกไป)
+        body_without_tail = self.snake[:-1]
+        if new_head in body_without_tail:
+            return False
+
+    # หัวใหม่ + ตัวเดิมตัดหางออก
+        self.snake = [new_head] + self.snake[:-1]
+        return True
+    
     def step(self, dx, dy):
 
         if self.game_over:
@@ -57,12 +70,6 @@ class GameEngine:
             self.check_apple()
             self.check_portal()
 
-    def check_apple(self):
-        head = self.snake[0]
-
-        if head in self.apples:
-            self.apples.remove(head)
-            self.snake.append(self.snake[-1])
 
     def check_portal(self):
         if self.snake[0] == self.portal:
@@ -71,6 +78,7 @@ class GameEngine:
 
     def get_state(self):
         return {
+            "background": self.background,
             "snake": self.snake,
             "walls": self.walls,
             "apples": self.apples,
@@ -96,7 +104,11 @@ class GameEngine:
         print("Loading level", level_index)
 
         level = LEVELS[level_index]
-        print("Level data:", level)
+
+        self.snake = list(level["snake"])
+        self.walls = list(level["walls"])
+        self.apples = list(level["apples"])
+        self.portal = level["portal"]
 
         self.snake = level["snake"].copy()
         print("Snake set:", self.snake)
@@ -105,8 +117,20 @@ class GameEngine:
         self.apples = level["apples"].copy()
         self.portal = level["portal"]
 
+        self.background = level.get("background", "assets/bg_sky.png")  # ← เพิ่ม
+        self.snake  = list(level["snake"])
+        self.walls  = set(level["walls"])
+        self.apples = list(level["apples"])
+        self.portal = level["portal"]
         self.game_over = False
         self.level_complete = False
+
+    def check_apple(self):
+        head = self.snake[0]
+        if head in self.apples:
+            self.apples.remove(head)
+        # ✅ ต่อหางเพิ่ม 1 ช่อง (ไม่ตัดหางออกรอบนี้)
+            self.snake.append(self.snake[-1])
 
     def reset_level(self):
         self.load_level(self.current_level)
