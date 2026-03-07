@@ -239,6 +239,12 @@ class GameBoard(Widget):
 
     def toggle_pause(self):
         self.is_paused = not self.is_paused
+        app = App.get_running_app()
+        if app and app.root and app.root.has_screen("game"):
+            screen = app.root.get_screen("game")
+            if 'pause_layout' in screen.ids:
+                screen.ids.pause_layout.opacity = 1 if self.is_paused else 0
+                screen.ids.pause_layout.disabled = not self.is_paused
 
 class SnakeApp(App):
 

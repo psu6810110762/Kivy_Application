@@ -296,3 +296,62 @@
                 text: '⌂  MENU'
                 size_hint_x: 0.25
                 on_press: root.manager.current = 'menu'
+            
+    # ── หน้าต่าง Pause Overlay ──────────────────────────────────────────
+    BoxLayout:
+        id: pause_layout
+        orientation: 'vertical'
+        opacity: 0
+        disabled: True
+        # เลื่อนแผ่นนี้ออกนอกจอเวลาซ่อน
+        pos_hint: {'center_y': 0.5} if self.opacity == 1 else {'center_y': 5.0}
+        spacing: 20
+        padding: [60, 100, 60, 100]
+        canvas.before:
+            Color:
+                rgba: 0.04, 0.04, 0.08, 0.85  # พื้นหลังมืดโปร่งแสง
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        Label:
+            text: 'PAUSED'
+            font_size: 56
+            bold: True
+            color: 0.85, 0.90, 1.00, 1
+            letter_spacing: 8
+            size_hint_y: None
+            height: 80
+
+        Label:
+            text: 'Take a break and plan your next move...'
+            font_size: 16
+            color: 0.45, 0.50, 0.65, 1
+            size_hint_y: None
+            height: 40
+
+        Widget:
+            size_hint_y: None
+            height: 30
+
+        AnchorLayout:
+            size_hint_y: None
+            height: 60
+            anchor_x: 'center'
+            NeonButton:
+                text: '▶  RESUME'
+                size_hint: None, None
+                size: 240, 54
+                on_press: game_board.toggle_pause()
+
+        AnchorLayout:
+            size_hint_y: None
+            height: 60
+            anchor_x: 'center'
+            GhostButton:
+                text: '⌂  MAIN MENU'
+                size_hint: None, None
+                size: 240, 54
+                on_press:
+                    root.manager.current = 'menu'
+                    game_board.toggle_pause()
