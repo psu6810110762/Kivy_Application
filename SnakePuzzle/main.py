@@ -5,7 +5,7 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.graphics import (Color, Line, Rectangle, Ellipse,
                             RoundedRectangle, PushMatrix,
                             PopMatrix, Rotate, Translate)
-
+from kivy.clock import Clock
 from game_engine import GameEngine
 
 CELL = 40
