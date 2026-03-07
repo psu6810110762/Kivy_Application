@@ -237,6 +237,12 @@ class GameBoard(Widget):
                     apples_left = len(state["apples"])
                     screen.ids.apple_label.text = f'APPLES LEFT: {apples_left}'
 
+                # เช็คสถานะ Game Over เพื่อสลับแสดงหน้าต่าง
+                if 'game_over_layout' in screen.ids:
+                    is_over = state["game_over"]
+                    screen.ids.game_over_layout.opacity = 1 if is_over else 0
+                    screen.ids.game_over_layout.disabled = not is_over
+
     def toggle_pause(self):
         self.is_paused = not self.is_paused
         app = App.get_running_app()

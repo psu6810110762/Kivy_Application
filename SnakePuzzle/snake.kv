@@ -355,3 +355,75 @@
                 on_press:
                     root.manager.current = 'menu'
                     game_board.toggle_pause()
+
+    # ── หน้าต่าง Game Over Overlay ──────────────────────────────────────────
+    BoxLayout:
+        id: game_over_layout
+        orientation: 'vertical'
+        opacity: 0
+        disabled: True
+        # เลื่อนแผ่นนี้ออกนอกจอเวลาซ่อน
+        pos_hint: {'center_y': 0.5} if self.opacity == 1 else {'center_y': 5.0}
+        spacing: 20
+        padding: [60, 100, 60, 100]
+        canvas.before:
+            Color:
+                rgba: 0.08, 0.02, 0.02, 0.9  # พื้นหลังสีแดงเข้มโปร่งแสง
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        Label:
+            text: 'X_X'
+            font_size: 64
+            color: 0.95, 0.35, 0.35, 1
+            size_hint_y: None
+            height: 80
+
+        Label:
+            text: 'GAME OVER'
+            font_size: 56
+            bold: True
+            color: 0.95, 0.35, 0.35, 1
+            letter_spacing: 8
+            size_hint_y: None
+            height: 80
+
+        Label:
+            text: 'You fell into the abyss...'
+            font_size: 16
+            color: 0.65, 0.45, 0.50, 1
+            size_hint_y: None
+            height: 40
+
+        Widget:
+            size_hint_y: None
+            height: 30
+
+        AnchorLayout:
+            size_hint_y: None
+            height: 60
+            anchor_x: 'center'
+            # ใช้ DangerButton สีแดงที่คุณเตรียมไว้
+            DangerButton:
+                text: '↻  TRY AGAIN'
+                size_hint: None, None
+                size: 240, 54
+                on_press:
+                    # สั่งรีเซ็ตด่านและวาดใหม่ทันที
+                    game_board.engine.reset_level()
+                    game_board.redraw()
+
+        AnchorLayout:
+            size_hint_y: None
+            height: 60
+            anchor_x: 'center'
+            GhostButton:
+                text: '⌂  MAIN MENU'
+                size_hint: None, None
+                size: 240, 54
+                on_press:
+                    root.manager.current = 'menu'
+                    # รีเซ็ตไว้ด้วย เผื่อกดเข้ามาเล่นใหม่จะได้ไม่ค้างหน้า Game Over
+                    game_board.engine.reset_level()
+                    game_board.redraw()
