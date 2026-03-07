@@ -77,15 +77,6 @@ _d5_walls = {
 
 LEVELS = [
     
-    {
-    "name":       "ทะเลทราย",
-    "background": "assets/bg_desert.png",
-    "snake":  [(7, 10), (6, 10), (5, 10)],
-    "walls":  _d5_walls,
-    "apples": [(10, 12)],
-    "portal": (9, 6),
-    "rocks":  [],
-},
     
     # ด่าน 1
     {
@@ -148,6 +139,15 @@ LEVELS = [
     "rocks":  [(8, 8)],
 },
 
-    # ด่าน 5
+# ด่าน 5
+    {
+    "name":       "ทะเลทราย",
+    "background": "assets/bg_desert.png",
+    "snake":  [(7, 10), (6, 10), (5, 10)],
+    "walls":  _d5_walls,
+    "apples": [(10, 12)],
+    "portal": (9, 6),
+    "rocks":  [],
+    },
     
 ]
