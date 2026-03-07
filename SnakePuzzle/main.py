@@ -76,6 +76,11 @@ class GameBoard(Widget):
         if still_falling:
             self._fall_event = Clock.schedule_interval(self._fall_step, 0.08)
 
+    def _fall_step(self, dt):
+        """เรียกทุก 0.08 วินาที ให้งูตกทีละ step"""
+        still_falling = self.engine.apply_gravity()
+        self.redraw()
+
     # ------------------------------------------------------------------
     # draw helpers
     # ------------------------------------------------------------------
