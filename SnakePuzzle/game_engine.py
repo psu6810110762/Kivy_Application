@@ -17,6 +17,9 @@ class GameEngine:
             if below in self.walls:
                 supported = True
                 break
+            if below in self.apples:  # ← เพิ่มตรงนี้
+                supported = True
+                break
             if y - 1 < 0:
                 self.game_over = True 
                 self.falling = True
