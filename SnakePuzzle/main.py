@@ -5,7 +5,6 @@ from kivy.clock import Clock
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.widget import Widget
 from kivy.graphics import Color, Line, Rectangle
-
 from game_engine import GameEngine
 
 
@@ -67,7 +66,6 @@ class SnakeGame(Widget):
         super().__init__(**kwargs)
 
         self.engine = GameEngine()
-
         Window.bind(on_key_down=self.on_key_down)
 
     def on_key_down(self, window, key, *args):

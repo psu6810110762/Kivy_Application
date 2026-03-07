@@ -2,6 +2,7 @@ from levels import LEVELS
 
 class GameEngine:
     def __init__(self):
+        print("INIT RUNNING")
         self.current_level = 0
         self.game_won = False
         self.load_level(self.current_level)
@@ -80,13 +81,29 @@ class GameEngine:
             "game_won": self.game_won
         }
     
-    def load_level(self, level_index):
-        level = LEVELS[level_index]
+    # def load_level(self, level_index):
+    #     level = LEVELS[level_index]
 
-        required_keys = ["snake", "walls", "apples", "portal"]
-        for key in required_keys:
-            if key not in level:
-                raise ValueError(f"Level missing key: {key}")
+    #     required_keys = ["snake", "walls", "apples", "portal"]
+    #     for key in required_keys:
+    #         if key not in level:
+    #             raise ValueError(f"Level missing key: {key}")
+
+    #     self.game_over = False
+    #     self.level_complete = False
+
+    def load_level(self, level_index):
+        print("Loading level", level_index)
+
+        level = LEVELS[level_index]
+        print("Level data:", level)
+
+        self.snake = level["snake"].copy()
+        print("Snake set:", self.snake)
+
+        self.walls = level["walls"].copy()
+        self.apples = level["apples"].copy()
+        self.portal = level["portal"]
 
         self.game_over = False
         self.level_complete = False
