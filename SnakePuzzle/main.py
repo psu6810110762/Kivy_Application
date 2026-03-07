@@ -33,12 +33,15 @@ class GameBoard(Widget):
         self.bind(size=self.redraw, pos=self.redraw)
         self._keyboard = Window.request_keyboard(self._on_keyboard_closed, self)
         self._keyboard.bind(on_key_down=self.on_key_down)
+        self.is_paused = False
 
     def _on_keyboard_closed(self):
         self._keyboard.unbind(on_key_down=self.on_key_down)
         self._keyboard = None
 
     def on_key_down(self, keyboard, keycode, text, modifiers):
+        if getattr(self, 'is_paused', False):
+            return
         key = keycode[0]
 
         # ถ้า game over กด R หรือ Enter เพื่อเล่นใหม่
@@ -210,7 +213,9 @@ class GameBoard(Widget):
                     apples_left = len(state["apples"])
                     screen.ids.apple_label.text = f'APPLES LEFT: {apples_left}'
 
-                    
+    def toggle_pause(self):
+        self.is_paused = not self.is_paused
+
 class SnakeApp(App):
 
     def build(self):
