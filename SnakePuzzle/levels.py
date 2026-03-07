@@ -77,9 +77,10 @@ _d5_walls = {
 }
 
 LEVELS = [
+    
     {
-    "name":       "อวกาศ",
-    "background": "assets/bg_space.png",
+    "name":       "ทะเลทราย",
+    "background": "assets/bg_desert.png",
     # งู แถว 8 col 5-7 → y=12+1=13... แต่พื้นอยู่ y=11
     # งูอยู่บนพื้น y=11 → y=12, หัวที่ col 7
     "snake":  [(7, 12), (6, 12), (5, 12)],
