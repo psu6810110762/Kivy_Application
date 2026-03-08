@@ -136,17 +136,17 @@ class GameBoard(Widget):
                     dx, dy = sx - nx, sy - ny
                 else:
                     dx, dy = 1, 0
-                source = 'assets/head.png'
+                source = 'assets/head3.png'
 
             elif i == len(snake) - 1:
                 px, py = snake[i - 1]
                 dx, dy = sx - px, sy - py
-                source = 'assets/tail.png'
+                source = 'assets/tail2.png'
 
             else:
                 px, py = snake[i - 1]
                 dx, dy = px - sx, py - sy
-                source = 'assets/body.png'
+                source = 'assets/body3.png'
 
             angle_map = {
                 ( 1,  0): 0,
@@ -191,28 +191,12 @@ class GameBoard(Widget):
 
         with self.canvas:
 
-            # background — วาดเต็ม parent (AnchorLayout)
             Color(1, 1, 1, 1)
-            parent = self.parent
-            if parent:
-                Rectangle(
-                    source=state["background"],
-                    pos=parent.pos,
-                    size=parent.size
-                )
-            else:
-                Rectangle(
-                    source=state["background"],
-                    pos=self.pos,
-                    size=self.size
-                )
-
-            # grid จางๆ ทับ background
-            Color(0, 0, 0, 0.15)
-            for x in range(0, int(self.width) + c, c):
-                Line(points=[ox+x, oy, ox+x, oy+self.height])
-            for y in range(0, int(self.height) + c, c):
-                Line(points=[ox, oy+y, ox+self.width, oy+y])
+            Rectangle(
+                source=state["background"],
+                pos=self.pos,
+                size=self.size
+            )
 
             # walls
             Color(0.35, 0.38, 0.55, 0.85)

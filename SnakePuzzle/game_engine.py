@@ -118,7 +118,7 @@ class GameEngine:
     def check_portal(self):
         if self.snake[0] == self.portal:
             self.level_complete = True
-            self.next_level()  # ← ไปด่านถัดไปทันที
+            # self.next_level()  # ← ไปด่านถัดไปทันที
 
     # ------------------------------------------------------------------
     def get_state(self):
